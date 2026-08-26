@@ -1,6 +1,6 @@
 # docs/07_IMPLEMENTATION.md: TimeSwap Implementation Roadmap & Engineering Guidelines
 
-This document defines the authoritative, phase-by-phase implementation roadmap, engineering processes, testing mandates, quality gates, and AI agent operating rules for building the TimeSwap platform from scratch to production. It serves as the primary execution guide for Google AI Studio.
+This document defines the authoritative, phase-by-phase implementation roadmap, engineering processes, testing mandates, quality gates, and AI agent operating rules for building the TimeSwap platform from scratch to production. It serves as the primary execution guide for Google Antigravity.
 
 ---
 
@@ -18,7 +18,7 @@ TimeSwap is built as a production-grade, modular monolith optimized for correctn
 
 ## 2. Hierarchy of Authority & Source of Truth
 
-When implementation questions or design decisions arise, Google AI Studio must strictly adhere to the following documentation hierarchy:
+When implementation questions or design decisions arise, Google Antigravity must strictly adhere to the following documentation hierarchy:
 
 1. `docs/01_PRODUCT.md`: Authoritative for product rules, user roles, economic principles, cancellation policies, and MVP boundaries.
 2. `docs/02_ARCHITECTURE.md`: Authoritative for system topology, tech stack decisions, infrastructure boundaries, and security standards.
@@ -27,8 +27,9 @@ When implementation questions or design decisions arise, Google AI Studio must s
 5. `docs/05_CREDIT_LEDGER.md`: Authoritative for double-entry accounting rules, account types, journal transactions, settlement workflows, and balance invariants.
 6. `docs/06_UI_UX.md`: Authoritative for screen inventories, visual design tokens, component behaviors, user flows, and accessibility requirements.
 7. `docs/07_IMPLEMENTATION.md`: Authoritative for the execution sequence, testing requirements, definition of done, and AI coding constraints.
+8. `docs/08_FILE_STRUCTURE.md`: Authoritative for repository structure, application/package boundaries, file and directory ownership, dependency direction, protected areas, and code organization rules.
 
-*Rule of Interpretation:* AI Studio must never invent product logic, modify economic rules, or add unapproved endpoints. If an edge case is unspecified, flag it as an open decision.
+*Rule of Interpretation:* Antigravity must never invent product logic, modify economic rules, or add unapproved endpoints. If an edge case is unspecified, flag it as an open decision.
 
 ---
 
@@ -61,10 +62,10 @@ Development must proceed sequentially through 14 structured phases. No phase may
 
 * **Objective:** Establish a typed monorepo, local development container orchestration, database connection pooling, shared type packages, and automated CI pipelines.
 * **Prerequisites:** Approved architecture specification (`docs/02_ARCHITECTURE.md`).
-* **Database Work:** Configure PostgreSQL 16 container with persistent volume; initialize Prisma ORM in `packages/database`.
+* **Database Work:** Configure PostgreSQL 16+ container with persistent volume; initialize Prisma ORM in `packages/database`.
 * **Backend Work:** Initialize NestJS Fastify application in `apps/api`; configure global validation pipes, exception filters, and Pino logger.
-* **Frontend Work:** Initialize Next.js 14+ (App Router) in `apps/web`; configure Tailwind CSS, Lucide icons, and base design tokens matching `docs/06_UI_UX.md`.
-* **Worker & Cache Work:** Initialize Redis 7 container; configure BullMQ queue infrastructure in `apps/worker`.
+* **Frontend Work:** Initialize Next.js (App Router) in `apps/web`; configure Tailwind CSS, Lucide icons, and base design tokens matching `docs/06_UI_UX.md`.
+* **Worker & Cache Work:** Initialize Redis 7+ container; configure BullMQ queue infrastructure in `apps/worker`.
 * **Test Framework:** Setup Vitest for unit tests, Jest/Supertest for API integration tests, and Playwright for E2E testing.
 * **User-Visible Milestone:** Local environment runs `pnpm dev`, rendering a base Next.js landing shell and returning 200 OK from `/api/v1/health`.
 * **Definition of Done:** CI pipeline passes linting, type-checking, database migrations, and health check integration tests.
@@ -267,7 +268,7 @@ A task or phase is considered complete if and only if it satisfies all of the fo
 
 ---
 
-## 7. Google AI Studio Implementation Rules
+## 7. Google Antigravity Implementation Rules
 
 These rules are non-negotiable constraints for AI coding agents:
 
@@ -298,7 +299,7 @@ If an implementation hurdle reveals a flaw or necessary modification in the prod
 2. **Identify Impacted Specifications:** Locate the affected documents (e.g., `01_PRODUCT.md` for rules, `03_DOMAIN_DATABASE.md` for schemas).
 3. **Document the Revision:** Explicitly update the relevant specification document and record the rationale in an Architecture Decision Record (ADR).
 4. **Apply Code & Tests:** Implement the approved change across backend, frontend, and automated test suites.
-5. **Verify Coherence:** Confirm that all seven project documents remain synchronized and free of contradictions.
+5. **Verify Coherence:** Confirm that all eight project documents remain synchronized and free of contradictions.
 
 ---
 
@@ -340,12 +341,12 @@ The following mechanisms are explicitly excluded from the MVP build and must not
 
 ## 12. Standard AI Implementation Checklist
 
-For every assigned engineering task, AI Studio must execute the following checklist:
+For every assigned engineering task, Antigravity must execute the following checklist:
 
 ### Before Writing Code
 
 * [ ] Verify which phase this task belongs to.
-* [ ] Review the authoritative documentation for the domain (`01_PRODUCT.md` through `06_UI_UX.md`).
+* [ ] Review the authoritative documentation for the domain (`01_PRODUCT.md` through `08_FILE_STRUCTURE.md`).
 * [ ] Verify that prerequisites from prior phases are completed and tested.
 
 ### During Implementation

@@ -1,0 +1,451 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum UserStatus {
+  UNVERIFIED
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum SkillRole {
+  OFFERED
+  LEARNING
+}
+
+enum DeliveryFormat {
+  ONLINE
+  IN_PERSON
+  BOTH
+}
+
+enum ServiceOfferStatus {
+  DRAFT
+  PUBLISHED
+  PAUSED
+  ARCHIVED
+}
+
+enum HelpRequestStatus {
+  OPEN
+  IN_FULFILLMENT
+  FULFILLED
+  CLOSED
+}
+
+enum BookingStatus {
+  PENDING_ACCEPTANCE
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+enum EscrowStatus {
+  HELD
+  SETTLED
+  REFUNDED
+  SPLIT
+}
+
+enum LedgerAccountType {
+  USER_WALLET
+  ESCROW_HOLD
+  SYSTEM_RESERVE
+  TREASURY_SINK
+}
+
+enum EntryType {
+  DEBIT
+  CREDIT
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED
+}
+
+enum DisputeOutcome {
+  FULL_REFUND_REQUESTER
+  FULL_RELEASE_PROVIDER
+  SPLIT_50_50
+}
+
+enum MessageThreadStatus {
+  ACTIVE
+  READ_ONLY
+  BLOCKED
+}
+
+model User {
+  id               String          @id @default(uuid())
+  email            String          @unique
+  role             UserRole        @default(USER)
+  status           UserStatus      @default(UNVERIFIED)
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+
+  credential       UserCredential?
+  profile          Profile?
+  sessions         SessionToken[]
+  ledgerAccount    LedgerAccount?
+  serviceOffers    ServiceOffer[]  @relation("ProviderOffers")
+  helpRequests     HelpRequest[]   @relation("RequesterHelpRequests")
+  requestedBookings Booking[]      @relation("RequesterBookings")
+  providedBookings  Booking[]      @relation("ProviderBookings")
+  notifications    Notification[]
+
+  @@map("users")
+}
+
+model UserCredential {
+  id           String   @id @default(uuid())
+  userId       String   @unique @map("user_id")
+  passwordHash String   @map("password_hash")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_credentials")
+}
+
+model SessionToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session_tokens")
+}
+
+model Profile {
+  id                      String         @id @default(uuid())
+  userId                  String         @unique @map("user_id")
+  displayName             String         @map("display_name")
+  handle                  String         @unique
+  avatarUrl               String?        @map("avatar_url")
+  bio                     String?
+  city                    String
+  generalDistrict         String         @map("general_district")
+  deliveryPreference      DeliveryFormat @default(BOTH) @map("delivery_preference")
+  ratingAverage           Decimal        @default(0.00) @db.Decimal(3, 2) @map("rating_average")
+  completedExchangesCount Int            @default(0) @map("completed_exchanges_count")
+  reliabilityScore        Decimal        @default(100.00) @db.Decimal(5, 2) @map("reliability_score")
+  createdAt               DateTime       @default(now()) @map("created_at")
+  updatedAt               DateTime       @updatedAt @map("updated_at")
+
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills ProfileSkill[]
+
+  @@index([city, generalDistrict])
+  @@map("profiles")
+}
+
+model SkillCategory {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  skills        Skill[]
+  serviceOffers ServiceOffer[]
+  helpRequests  HelpRequest[]
+
+  @@map("skill_categories")
+}
+
+model Skill {
+  id         String   @id @default(uuid())
+  categoryId String   @map("category_id")
+  name       String
+  slug       String   @unique
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  category SkillCategory  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  profiles ProfileSkill[]
+
+  @@unique([categoryId, name])
+  @@map("skills")
+}
+
+model ProfileSkill {
+  id        String    @id @default(uuid())
+  profileId String    @map("profile_id")
+  skillId   String    @map("skill_id")
+  skillRole SkillRole @map("skill_role")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  skill   Skill   @relation(fields: [skillId], references: [id], onDelete: Restrict)
+
+  @@unique([profileId, skillId, skillRole])
+  @@index([profileId, skillRole])
+  @@index([skillId, skillRole])
+  @@map("profile_skills")
+}
+
+model ServiceOffer {
+  id              String             @id @default(uuid())
+  providerId      String             @map("provider_id")
+  categoryId      String             @map("category_id")
+  title           String
+  description     String
+  durationMinutes Int                @map("duration_minutes")
+  format          DeliveryFormat
+  city            String?
+  generalDistrict String?            @map("general_district")
+  status          ServiceOfferStatus @default(PUBLISHED)
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+
+  provider User          @relation("ProviderOffers", fields: [providerId], references: [id], onDelete: Restrict)
+  category SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  bookings Booking[]
+
+  @@index([status, categoryId, format])
+  @@map("service_offers")
+}
+
+model HelpRequest {
+  id              String            @id @default(uuid())
+  requesterId     String            @map("requester_id")
+  categoryId      String            @map("category_id")
+  title           String
+  description     String
+  targetDuration  Int               @map("target_duration")
+  preferredFormat DeliveryFormat    @map("preferred_format")
+  city            String?
+  generalDistrict String?           @map("general_district")
+  urgency         String?
+  status          HelpRequestStatus @default(OPEN)
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  requester User          @relation("RequesterHelpRequests", fields: [requesterId], references: [id], onDelete: Restrict)
+  category  SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  bookings  Booking[]
+
+  @@index([status, categoryId])
+  @@map("help_requests")
+}
+
+model Booking {
+  id                  String        @id @default(uuid())
+  requesterId         String        @map("requester_id")
+  providerId          String        @map("provider_id")
+  serviceOfferId      String?       @map("service_offer_id")
+  helpRequestId       String?       @map("help_request_id")
+  scheduledStartTime  DateTime      @map("scheduled_start_time")
+  scheduledEndTime    DateTime      @map("scheduled_end_time")
+  durationMinutes     Int           @map("duration_minutes")
+  creditAmount        Decimal       @db.Decimal(6, 2) @map("credit_amount")
+  status              BookingStatus @default(PENDING_ACCEPTANCE)
+  cancelledByUserId   String?       @map("cancelled_by_user_id")
+  cancellationReason String?       @map("cancellation_reason")
+  cancellationType   String?       @map("cancellation_type")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+
+  requester     User          @relation("RequesterBookings", fields: [requesterId], references: [id], onDelete: Restrict)
+  provider      User          @relation("ProviderBookings", fields: [providerId], references: [id], onDelete: Restrict)
+  serviceOffer  ServiceOffer? @relation(fields: [serviceOfferId], references: [id], onDelete: Restrict)
+  helpRequest   HelpRequest?  @relation(fields: [helpRequestId], references: [id], onDelete: Restrict)
+  session       Session?
+  escrowHold    EscrowHold?
+  messageThread MessageThread?
+
+  @@index([requesterId, status])
+  @@index([providerId, status])
+  @@index([scheduledStartTime])
+  @@map("bookings")
+}
+
+model Session {
+  id                   String         @id @default(uuid())
+  bookingId            String         @unique @map("booking_id")
+  deliveryFormat       DeliveryFormat @map("delivery_format")
+  meetingLink          String?        @map("meeting_link")
+  meetingLocationText  String?        @map("meeting_location_text")
+  requesterAttestedAt  DateTime?      @map("requester_attested_at")
+  providerAttestedAt   DateTime?      @map("provider_attested_at")
+  autoSettleAt         DateTime       @map("auto_settle_at")
+  createdAt            DateTime       @default(now()) @map("created_at")
+  updatedAt            DateTime       @updatedAt @map("updated_at")
+
+  booking     Booking      @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  reviews     Review[]
+  disputeCase DisputeCase?
+
+  @@index([autoSettleAt])
+  @@map("sessions")
+}
+
+model LedgerAccount {
+  id          String            @id @default(uuid())
+  userId      String?           @unique @map("user_id")
+  accountType LedgerAccountType @map("account_type")
+  balance     Decimal           @default(0.00) @db.Decimal(12, 2)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  user           User?          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  journalEntries JournalEntry[]
+
+  @@map("ledger_accounts")
+}
+
+model LedgerTransaction {
+  id              String   @id @default(uuid())
+  transactionType String   @map("transaction_type")
+  bookingId       String?  @map("booking_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  journalEntries JournalEntry[]
+
+  @@map("ledger_transactions")
+}
+
+model JournalEntry {
+  id            String   @id @default(uuid())
+  transactionId String   @map("transaction_id")
+  accountId     String   @map("account_id")
+  entryType     EntryType @map("entry_type")
+  amount        Decimal  @db.Decimal(12, 2)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  transaction LedgerTransaction @relation(fields: [transactionId], references: [id], onDelete: Restrict)
+  account     LedgerAccount     @relation(fields: [accountId], references: [id], onDelete: Restrict)
+
+  @@index([accountId, createdAt])
+  @@index([transactionId])
+  @@map("journal_entries")
+}
+
+model EscrowHold {
+  id        String       @id @default(uuid())
+  bookingId String       @unique @map("booking_id")
+  amount    Decimal      @db.Decimal(6, 2)
+  status    EscrowStatus @default(HELD)
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+
+  @@map("escrow_holds")
+}
+
+model Review {
+  id            String   @id @default(uuid())
+  sessionId     String   @map("session_id")
+  authorUserId  String   @map("author_user_id")
+  subjectUserId String   @map("subject_user_id")
+  rating        Int
+  attributeTags Json?    @map("attribute_tags")
+  commentText   String?  @map("comment_text")
+  isRevealed    Boolean  @default(false) @map("is_revealed")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+
+  @@unique([sessionId, authorUserId])
+  @@map("reviews")
+}
+
+model MessageThread {
+  id               String              @id @default(uuid())
+  participantOneId String              @map("participant_one_id")
+  participantTwoId String              @map("participant_two_id")
+  bookingId        String?             @unique @map("booking_id")
+  listingId        String?             @map("listing_id")
+  threadStatus     MessageThreadStatus @default(ACTIVE) @map("thread_status")
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt @map("updated_at")
+
+  booking  Booking?  @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  messages Message[]
+
+  @@index([participantOneId, participantTwoId])
+  @@map("message_threads")
+}
+
+model Message {
+  id           String   @id @default(uuid())
+  threadId     String   @map("thread_id")
+  senderUserId String   @map("sender_user_id")
+  contentText  String   @map("content_text")
+  isRead       Boolean  @default(false) @map("is_read")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  thread MessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
+  @@map("messages")
+}
+
+model Notification {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  notificationType String   @map("notification_type")
+  title            String
+  bodyText         String   @map("body_text")
+  actionUrl        String?  @map("action_url")
+  isRead           Boolean  @default(false) @map("is_read")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
+  @@map("notifications")
+}
+
+model DisputeCase {
+  id                String         @id @default(uuid())
+  sessionId         String         @unique @map("session_id")
+  initiatorUserId   String         @map("initiator_user_id")
+  respondentUserId  String         @map("respondent_user_id")
+  disputeReason     String         @map("dispute_reason")
+  evidenceText      String?        @map("evidence_text")
+  status            DisputeStatus  @default(OPEN)
+  resolutionOutcome DisputeOutcome? @map("resolution_outcome")
+  resolutionNotes   String?        @map("resolution_notes")
+  resolvedByUserId  String?        @map("resolved_by_user_id")
+  resolvedAt        DateTime?      @map("resolved_at")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+
+  @@map("dispute_cases")
+}
+
+model AuditLog {
+  id               String   @id @default(uuid())
+  actorUserId      String?  @map("actor_user_id")
+  actionType       String   @map("action_type")
+  targetEntityId   String?  @map("target_entity_id")
+  targetEntityType String?  @map("target_entity_type")
+  changePayload    Json?    @map("change_payload")
+  ipAddress        String?  @map("ip_address")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}

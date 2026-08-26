@@ -1,6 +1,6 @@
 # docs/03_DOMAIN_DATABASE.md: TimeSwap Domain Model & Database Specification
 
-This document defines the authoritative domain model, entity responsibilities, relational structures, lifecycles, and database constraints for TimeSwap. It establishes the persistent data specification for implementation in Google AI Studio without introducing premature complexity.
+This document defines the authoritative domain model, entity responsibilities, relational structures, lifecycles, and database constraints for TimeSwap. It establishes the persistent data specification for implementation in Google Antigravity without introducing premature complexity.
 
 ---
 

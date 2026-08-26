@@ -1,0 +1,15 @@
+FROM node:22-alpine AS base
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@11.24.0 --activate
+
+FROM base AS builder
+COPY . .
+RUN pnpm install --frozen-lockfile
+RUN pnpm build --filter=@timeswap/worker
+
+FROM base AS runner
+ENV NODE_ENV=production
+COPY --from=builder /app/apps/worker/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+
+CMD ["node", "dist/main.js"]

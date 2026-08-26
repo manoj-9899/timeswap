@@ -1,6 +1,6 @@
 # docs/06_UI_UX.md: TimeSwap UI/UX Specification
 
-This document defines the user experience, interface patterns, visual design standards, responsive behaviors, screen flows, and usability invariants for TimeSwap. It translates the product definitions and architectural rules into an implementation blueprint for Google AI Studio.
+This document defines the user experience, interface patterns, visual design standards, responsive behaviors, screen flows, and usability invariants for TimeSwap. It translates the product definitions and architectural rules into an implementation blueprint for Google Antigravity.
 
 ---
 

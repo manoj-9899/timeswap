@@ -1,6 +1,6 @@
 # docs/05_CREDIT_LEDGER.md: TimeSwap Credit & Ledger Specification
 
-This document defines the authoritative financial engineering, double-entry accounting rules, escrow state transitions, settlement flows, and invariant constraints for the TimeSwap platform. It serves as the definitive specification for implementation in Google AI Studio.
+This document defines the authoritative financial engineering, double-entry accounting rules, escrow state transitions, settlement flows, and invariant constraints for the TimeSwap platform. It serves as the definitive specification for implementation in Google Antigravity.
 
 ---
 

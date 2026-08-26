@@ -1,6 +1,6 @@
 # docs/02_ARCHITECTURE.md: TimeSwap Technical Architecture
 
-This document defines the system architecture, component boundaries, domain structure, data flow, security model, and deployment strategy for TimeSwap. It translates the product definitions from `docs/01_PRODUCT.md` into an engineering specification for implementation in Google AI Studio.
+This document defines the system architecture, component boundaries, domain structure, data flow, security model, and deployment strategy for TimeSwap. It translates the product definitions from `docs/01_PRODUCT.md` into an engineering specification for implementation in Google Antigravity.
 
 ---
 

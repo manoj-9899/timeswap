@@ -1,6 +1,6 @@
 # AGENTS.md: TimeSwap AI Coding Agent Directives & Repository Rules
 
-This document defines the operational directives, architectural boundaries, security invariants, and coding standards for AI coding agents (including Google AI Studio) implementing the TimeSwap platform. All instructions in this file are mandatory and non-negotiable.
+This document defines the operational directives, architectural boundaries, security invariants, and coding standards for AI coding agents (including Google Antigravity) implementing the TimeSwap platform. All instructions in this file are mandatory and non-negotiable.
 
 ---
 
@@ -24,7 +24,7 @@ This document defines the operational directives, architectural boundaries, secu
 
 ## 2. Document Authority & Specification Hierarchy
 
-When building or modifying any part of TimeSwap, AI Studio must adhere to the following strict hierarchy of authority. Lower-level implementations must never contradict higher-level specifications:
+When building or modifying any part of TimeSwap, Antigravity must adhere to the following strict hierarchy of authority. Lower-level implementations must never contradict higher-level specifications:
 
 1. `docs/01_PRODUCT.md`: Authoritative for product definition, economic rules, user roles, cancellation policies, and MVP boundaries.
 2. `docs/02_ARCHITECTURE.md`: Authoritative for technical architecture, infrastructure boundaries, tech stack choices, and deployment topology.
@@ -33,14 +33,15 @@ When building or modifying any part of TimeSwap, AI Studio must adhere to the fo
 5. `docs/05_CREDIT_LEDGER.md`: Authoritative for double-entry accounting rules, account types, journal entries, escrow state machines, and balance invariants.
 6. `docs/06_UI_UX.md`: Authoritative for screen inventories, user flows, responsive component behaviors, visual tokens, and accessibility standards.
 7. `docs/07_IMPLEMENTATION.md`: Authoritative for phase sequencing, quality gates, test requirements, and definition of done.
+8. `docs/08_FILE_STRUCTURE.md`: Authoritative for repository structure, application/package boundaries, file and directory ownership, dependency direction, protected areas, and code organization rules.
 
-*Rule for Handling Conflicts:* If an assigned task or user prompt conflicts with any approved document in `docs/`, AI Studio must **not** silently invent a new behavior. AI Studio must highlight the contradiction, follow the authoritative document, and request formal specification updates before proceeding.
+*Rule for Handling Conflicts:* If an assigned task or user prompt conflicts with any approved document in `docs/`, Antigravity must **not** silently invent a new behavior. Antigravity must highlight the contradiction, follow the authoritative document, and request formal specification updates before proceeding.
 
 ---
 
 ## 3. Pre-Coding Inspection Protocol
 
-Before writing or modifying any code, AI Studio must execute the following preliminary checks:
+Before writing or modifying any code, Antigravity must execute the following preliminary checks:
 
 * **Identify Affected Domains:** Determine exactly which domain modules and documentation specifications govern the task.
 * **Review Relevant Documentation:** Read the corresponding sections in `docs/01_PRODUCT.md` through `docs/07_IMPLEMENTATION.md`.
@@ -53,7 +54,7 @@ Before writing or modifying any code, AI Studio must execute the following preli
 
 ## 4. Scope Control & Architectural Boundaries
 
-AI Studio must strictly respect the following architectural guardrails:
+Antigravity must strictly respect the following architectural guardrails:
 
 * **DO NOT** convert the modular monolith into microservices or distributed micro-frontends.
 * **DO NOT** replace or augment the approved tech stack (Next.js, NestJS, Fastify, PostgreSQL, Prisma, Redis, BullMQ) without explicit specification revisions.
@@ -140,7 +141,7 @@ Every feature implementation must include corresponding automated tests:
 
 ## 11. Implementation & Change Workflow
 
-For every assigned engineering task, AI Studio must follow this exact execution cycle:
+For every assigned engineering task, Antigravity must follow this exact execution cycle:
 
 | Stage | Required Actions |
 | --- | --- |
@@ -189,7 +190,7 @@ If an implementation reality indicates that a product rule, database model, API 
 
 ## 16. MVP Boundaries & Excluded Features ("Do Not Build Yet")
 
-The following concepts from early research are explicitly excluded from the MVP build. AI Studio must **not** implement them unless formally approved in updated specifications:
+The following concepts from early research are explicitly excluded from the MVP build. Antigravity must **not** implement them unless formally approved in updated specifications:
 
 * **Demurrage / Balance Decay Engines:** No credit carrying charges or automatic deductions on idle balances.
 * **Credit Expiration Schedules:** Credits remain valid indefinitely.
@@ -227,9 +228,9 @@ A task is complete if and only if all of the following verification points pass:
 
 ---
 
-## 19. Communication Format for AI Studio
+## 19. Communication Format for Antigravity
 
-When presenting completed implementation tasks, AI Studio must structure its response using the following concise format:
+When presenting completed implementation tasks, Antigravity must structure its response using the following concise format:
 
 * **Task Summary:** Brief description of what was implemented.
 * **Affected Modules & Files:** List of created or modified files.

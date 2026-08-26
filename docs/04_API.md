@@ -1,6 +1,6 @@
 # docs/04_API.md: TimeSwap API & Communication Specification
 
-This document defines the authoritative REST API contract, request/response structures, authorization rules, error conventions, and communication protocols for the TimeSwap platform. It serves as the definitive specification for implementation in Google AI Studio.
+This document defines the authoritative REST API contract, request/response structures, authorization rules, error conventions, and communication protocols for the TimeSwap platform. It serves as the definitive specification for implementation in Google Antigravity.
 
 ---
 
