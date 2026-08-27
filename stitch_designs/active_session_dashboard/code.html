@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TimeSwap - Active Session</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "on-primary-container": "#90d8cc",
+                      "secondary-fixed-dim": "#ffb77d",
+                      "on-primary-fixed-variant": "#005048",
+                      "surface-container-high": "#e6e8ea",
+                      "on-primary-fixed": "#00201c",
+                      "surface-container": "#eceef0",
+                      "inverse-on-surface": "#eff1f3",
+                      "on-secondary-fixed-variant": "#6e3900",
+                      "on-background": "#191c1e",
+                      "error": "#ba1a1a",
+                      "surface-container-low": "#f2f4f6",
+                      "on-surface-variant": "#3f4947",
+                      "on-error-container": "#93000a",
+                      "on-tertiary": "#ffffff",
+                      "background": "#f7f9fb",
+                      "surface-tint": "#1b6960",
+                      "tertiary": "#004641",
+                      "surface-container-highest": "#e0e3e5",
+                      "on-surface": "#191c1e",
+                      "on-tertiary-container": "#83d9cf",
+                      "surface-variant": "#e0e3e5",
+                      "surface-dim": "#d8dadc",
+                      "secondary-fixed": "#ffdcc3",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#80d5cb",
+                      "secondary": "#904d00",
+                      "inverse-primary": "#8cd4c8",
+                      "inverse-surface": "#2d3133",
+                      "on-secondary-fixed": "#2f1500",
+                      "outline": "#6f7977",
+                      "tertiary-container": "#006059",
+                      "outline-variant": "#bec9c6",
+                      "secondary-container": "#fe932c",
+                      "surface": "#f7f9fb",
+                      "surface-bright": "#f7f9fb",
+                      "tertiary-fixed": "#9cf2e8",
+                      "primary-container": "#0b6057",
+                      "primary": "#00473f",
+                      "primary-fixed-dim": "#8cd4c8",
+                      "primary-fixed": "#a8f0e4",
+                      "on-secondary-container": "#663500",
+                      "on-tertiary-fixed": "#00201d",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#00504a",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "8px",
+                      "gutter": "24px",
+                      "unit": "4px",
+                      "lg": "24px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "xl": "40px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                  "sans": ['Plus Jakarta Sans', 'sans-serif'],
+              },
+              "fontSize": {
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.25",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+      </style>
+</head>
+<body class="bg-background text-on-surface h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-surface-container-low hidden md:flex flex-col p-md gap-sm h-screen w-64 fixed left-0 top-0 shadow-sm z-40">
+<div class="mb-xl flex flex-col items-center pt-lg">
+<div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mb-sm">
+<span class="material-symbols-outlined text-on-primary-container text-headline-lg" data-weight="fill" style="font-variation-settings: 'FILL' 1;">schedule</span>
+</div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">TimeSwap</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Community Exchange</p>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md rounded-full py-md px-lg w-full mb-lg shadow-sm hover:shadow-md transition-shadow active:scale-95 duration-200">
+            Start a Swap
+        </button>
+<ul class="flex-1 flex flex-col gap-sm">
+<li>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">storefront</span>
+                    Marketplace
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-bold font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">swap_horiz</span>
+                    Swaps
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+                    Wallet
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">person</span>
+                    Profile
+                </a>
+</li>
+</ul>
+<ul class="flex flex-col gap-sm mt-auto border-t border-outline-variant pt-md">
+<li>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">logout</span>
+                    Logout
+                </a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col md:ml-64 h-full overflow-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface flex justify-between items-center px-gutter w-full sticky top-0 z-50 h-16 border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<button class="md:hidden text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-headline-md text-headline-md font-bold text-primary md:hidden">TimeSwap</span>
+</div>
+<div class="flex items-center gap-lg">
+<!-- Wallet Capsule -->
+<div class="hidden sm:flex items-center bg-surface-container-high rounded-full px-md py-xs gap-md border border-outline-variant shadow-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-secondary" style="font-size: 18px;">account_balance_wallet</span>
+<span class="font-label-md text-label-md text-on-surface">Available: <span class="text-primary font-bold">2.50 CR</span></span>
+</div>
+<div class="h-4 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-outline" style="font-size: 18px;">lock</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Escrowed: <span class="text-secondary font-bold">1.00 CR</span></span>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="bg-secondary-container text-on-secondary-container font-label-md text-label-md rounded-full px-md py-xs ml-sm hover:shadow-md transition-shadow">
+                        Give Time Credits
+                    </button>
+<div class="w-8 h-8 rounded-full bg-surface-variant ml-sm overflow-hidden border border-outline-variant">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A close-up, professional headshot of a friendly individual with a warm smile, set against a pristine, soft-white background. The lighting is soft and studio-quality, emphasizing a premium humanist aesthetic. High resolution, evoking a sense of community trust and high-end UI profile design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc4vz_ceYTsT6ExPcHtpqU3Q4rUOTfRVJIyMz1Dns45tnkUvxck1AnmJS6T3ltWgaJGv1hdokCuRsD5dMVTXp5dPQg2rFrJ3fkvQURDmelmsh005cEkuRRdmz1JKOF9i3-6ih_1HAwwh5vfXKr-opaTLSomKk4k_CRPNK6lJwnFZVbuyLNMpMg1Z5YWhEdvDD6cUiIYUHQUdv5Q7CxuEkIUk78Qw-4jKxCL9pC1x1zL6AWkGwhZmRwTQ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex-1 overflow-y-auto p-gutter bg-surface-container-low flex flex-col lg:flex-row gap-gutter">
+<!-- Left Column: Session Details (70%) -->
+<div class="flex-1 lg:w-[70%] flex flex-col gap-lg">
+<!-- Status Pill -->
+<div class="inline-flex items-center gap-sm bg-tertiary-container text-on-tertiary-container rounded-full px-md py-sm w-max shadow-sm border border-tertiary">
+<span class="material-symbols-outlined" style="font-size: 20px;">check_circle</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">Confirmed - Upcoming</span>
+</div>
+<!-- Session Details Card -->
+<div class="bg-surface-container-lowest rounded-[24px] border border-outline-variant shadow-sm p-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container opacity-10 rounded-bl-full -mr-16 -mt-16"></div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">Session Details</h2>
+<div class="flex flex-col md:flex-row gap-lg md:gap-xl mb-lg">
+<div class="flex items-start gap-md">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">calendar_month</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg text-on-surface font-semibold">Saturday, Dec 21</p>
+<p class="font-body-md text-body-md text-on-surface-variant">2:00 PM - 3:00 PM (60 min)</p>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">lock_clock</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg text-on-surface font-semibold">1.00 CR</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Escrow Hold</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-md mb-lg border border-outline-variant flex items-start gap-md">
+<span class="material-symbols-outlined text-on-surface-variant mt-1">info</span>
+<p class="font-body-md text-body-md text-on-surface-variant">
+<strong>Private Venue:</strong> Online via Zoom. Link becomes active 5 mins before start.
+                         </p>
+</div>
+<div class="flex flex-col sm:flex-row gap-md">
+<button class="flex-1 bg-primary text-on-primary font-label-md text-label-md rounded-full py-md px-lg flex items-center justify-center gap-sm shadow-sm hover:shadow-md transition-shadow cursor-not-allowed opacity-70">
+<span class="material-symbols-outlined">videocam</span>
+                            Join Video Call
+                        </button>
+<button class="flex-1 border-2 border-primary text-primary font-label-md text-label-md rounded-full py-md px-lg flex items-center justify-center gap-sm hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">event</span>
+                            Add to Calendar
+                        </button>
+</div>
+</div>
+<!-- Participants Card -->
+<div class="bg-surface-container-lowest rounded-[24px] border border-outline-variant shadow-sm overflow-hidden">
+<div class="p-lg pb-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">Participants</h2>
+</div>
+<div class="flex flex-col md:flex-row">
+<!-- Provider -->
+<div class="flex-1 p-lg bg-surface-container-lowest border-r border-outline-variant flex items-center gap-md">
+<div class="relative">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary">
+<img alt="Provider Avatar" class="w-full h-full object-cover" data-alt="A portrait of a male software developer in his late 20s, wearing a casual dark teal t-shirt, set against a bright, warm off-white minimalist studio background. Soft, high-key lighting emphasizing a premium, approachable, and professional humanist aesthetic. High resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuZApwETKOYHjXJspgkCa5a2SOE50M6zf09n0o-qI7qZJozbMFXLr7dxhKHmmxHfks7d82oCyHiGn23hToHSH1rBUF6MR9tZ8-QHpVUdPauvXNs_baSVCraxYNrzCJJcKHVtSxQoJarmZHaBeZkmrV_p8kUukf_arxUzI5UA5QpKDGYX7q07QYqKY5wdwfjNLac2p9qHAWoV3aplXE3cOFdDE1do1EZyN82DjuzT_JB4BHICz26VNT0Q"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary-container text-on-primary-container text-[10px] font-bold px-2 py-1 rounded-full border border-surface-container-lowest">Provider</div>
+</div>
+<div>
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface">@alex_dev</h3>
+<div class="flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined" style="font-size: 16px; font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md font-bold">4.9</span>
+</div>
+</div>
+</div>
+<!-- Requester -->
+<div class="flex-1 p-lg bg-surface-container-low flex items-center gap-md">
+<div class="relative">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-outline-variant">
+<img alt="Requester Avatar" class="w-full h-full object-cover" data-alt="A portrait of a young female learner in her early 20s, smiling thoughtfully, wearing a light colored blouse, set against a pristine white studio background. Soft, natural lighting. The mood is eager and trusting, perfectly fitting a high-end community skill-sharing platform. High resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSyPpZRP4dmPXRIIYyJ3ZRfCITUcJljzVnvkruAHmbeDoLCzEsp-cNcAA4axGec2TwG3SmSiTA3e1UId5vQk8Ps2nKDsGF6_g7Wtd0yJWFBxCGKcKcBMG7jb0p1uoZyJo3F1LG17sBgh4Ks5lSIQV1hu-c71L0GliGbXmY7n97e4N11scUxBsktVgNT5nY3Pw6z8-YJud6WYasrDMF2YNtxVfPaBZLXf-DdBaTL0hMVEgh_34sD8vxPg"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1 rounded-full border border-surface-container-lowest">Requester</div>
+</div>
+<div>
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface">@maya_learner</h3>
+<div class="flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined" style="font-size: 16px; font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md font-bold">5.0</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-md mt-auto pt-lg border-t border-outline-variant">
+<button class="w-full sm:w-auto bg-primary text-on-primary font-label-md text-label-md rounded-full py-md px-lg flex items-center justify-center gap-sm shadow-sm hover:shadow-md transition-shadow">
+<span class="material-symbols-outlined">check</span>
+                        Confirm Session Completed
+                    </button>
+<div class="flex items-center gap-lg">
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors">
+                            Cancel Booking
+                        </button>
+<button class="font-label-md text-label-md text-error flex items-center gap-xs hover:underline underline-offset-4 transition-all">
+<span class="material-symbols-outlined" style="font-size: 18px;">warning</span>
+                            Report Issue / Dispute
+                        </button>
+</div>
+</div>
+</div>
+<!-- Right Column: Chat Panel (30%) -->
+<div class="lg:w-[30%] bg-surface-container-lowest rounded-[24px] border border-outline-variant shadow-sm flex flex-col overflow-hidden h-[600px] lg:h-auto shrink-0">
+<!-- Chat Header -->
+<div class="bg-surface-container-low p-md border-b border-outline-variant flex items-center justify-between sticky top-0 z-10">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img alt="Alex Avatar small" class="w-full h-full object-cover" data-alt="A small circular avatar headshot of a male developer, consistent with the provider profile, set against a warm white background. High key lighting, clean minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6wiwiHAW_h8vsvIgc1qumO27zYtx_yAXyQVONamGEs7UCTDWFP2HPSEwvQOY37JAk2CsxDvguyTt8YBEMj2h0FixTk-ghY9a8MuCxd5ZpGQkJ1HgcoW951u77oXfjbkPt-s20Qdk92kt5DEQRBGCeRCjH0bZvVsAWpjjwOf0a8z6If6gurU4GA2NZYj3nhwLPU0gzcGsTQpofKmihZAACj1yPkE_88BJWPeXSxs7wrPakEGN-qPTPEQ"/>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Chat with Alex</h3>
+<span class="inline-flex items-center gap-xs text-primary bg-primary-container/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mt-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                                Active Session Context
+                            </span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<!-- Chat History -->
+<div class="flex-1 overflow-y-auto p-md flex flex-col gap-md bg-surface-bright">
+<!-- Alex Message (Received) -->
+<div class="flex items-start gap-sm max-w-[85%]">
+<div class="w-8 h-8 rounded-full overflow-hidden shrink-0 mt-1">
+<img alt="Alex" class="w-full h-full object-cover" data-alt="Another variation of the provider avatar, small scale." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi0aMxbSsbkaaKuF8Obln0QBwuEEjnKPYinCwc1_LOvg_Y6R38FLQGG1PBVpd6n-JOiyHgJuJ6B9ajTpmiTs1SarbhfzFVOvMJpIn3qxHBBIimjDK4vsLieCd2v58m05X_-72jD5yuUwLmVpa1iuzush0fgSBoIorj2gqhj52qBWpsw-GQfGlAIqKUx-jGMF_UTer5XxTwPP6tgbYgG-3oWVm9b8ej51vEGppzDjmpP6pNehg0hu1LzA"/>
+</div>
+<div class="bg-surface-container p-sm px-md rounded-2xl rounded-tl-none border border-outline-variant">
+<p class="font-body-sm text-body-sm text-on-surface">Hey Maya, ready for our React session?</p>
+<span class="text-[10px] text-on-surface-variant mt-1 block">1:45 PM</span>
+</div>
+</div>
+<!-- Maya Message (Sent) -->
+<div class="flex items-start gap-sm max-w-[85%] self-end flex-row-reverse">
+<div class="w-8 h-8 rounded-full overflow-hidden shrink-0 mt-1">
+<img alt="Maya" class="w-full h-full object-cover" data-alt="Another variation of the requester avatar, small scale." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-AI7U-NvLNGpeG2W8u7uOAqr7Is_fH_fvpglvmEgNEeA-E4fN9b4CUID0shA4b2Z8StJ8QDY0jZfMllt9ocSRPAgBhPY0bp7nur6o4YuCOYtjR2xwC1Fa22_wI1b3iKKRhiE82N0S9MbQTKAe7YqXjRwYyU3LQAB6QdsDNuzKigaUwVKJ26Fa2JkBnSt1NJx0-VvRyiLLPDfK_lCOr9UAI11b7moQ3PZamCWFBw4-AQBlrtYTgVQPuw"/>
+</div>
+<div class="bg-primary text-on-primary p-sm px-md rounded-2xl rounded-tr-none shadow-sm">
+<p class="font-body-sm text-body-sm">Yes! Looking forward to it.</p>
+<span class="text-[10px] text-primary-fixed-dim mt-1 block text-right">1:47 PM</span>
+</div>
+</div>
+</div>
+<!-- Chat Composer -->
+<div class="p-md bg-surface-container-lowest border-t border-outline-variant sticky bottom-0">
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-sm pl-md pr-12 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Type a message..." type="text"/>
+<button class="absolute right-2 w-8 h-8 bg-primary text-on-primary rounded-full flex items-center justify-center hover:bg-tertiary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 18px; transform: rotate(-45deg); margin-left: 2px; margin-bottom: 2px;">send</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

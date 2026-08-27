@@ -11,13 +11,16 @@
     "clean": "rm -rf .next dist"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
     "@timeswap/config": "workspace:*",
     "@timeswap/contracts": "workspace:*",
     "@timeswap/types": "workspace:*",
     "@timeswap/ui": "workspace:*",
     "next": "^15.1.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.86.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^22.13.4",

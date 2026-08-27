@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TimeSwap - Wallet</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#00504a",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed": "#00201c",
+                        "secondary": "#904d00",
+                        "primary": "#00473f",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary-container": "#006059",
+                        "primary-fixed-dim": "#8cd4c8",
+                        "tertiary-fixed-dim": "#80d5cb",
+                        "background": "#f7f9fb",
+                        "tertiary-fixed": "#9cf2e8",
+                        "primary-container": "#0b6057",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-high": "#e6e8ea",
+                        "on-secondary-container": "#663500",
+                        "surface-container": "#eceef0",
+                        "on-error-container": "#93000a",
+                        "surface": "#f7f9fb",
+                        "outline": "#6f7977",
+                        "on-primary-container": "#90d8cc",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-fixed": "#a8f0e4",
+                        "secondary-fixed": "#ffdcc3",
+                        "secondary-fixed-dim": "#ffb77d",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#004641",
+                        "surface-bright": "#f7f9fb",
+                        "inverse-surface": "#2d3133",
+                        "surface-tint": "#1b6960",
+                        "on-tertiary-fixed": "#00201d",
+                        "on-background": "#191c1e",
+                        "inverse-primary": "#8cd4c8",
+                        "on-secondary-fixed-variant": "#6e3900",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#83d9cf",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e0e3e5",
+                        "outline-variant": "#bec9c6",
+                        "on-surface-variant": "#3f4947",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#005048",
+                        "secondary-container": "#fe932c",
+                        "on-secondary-fixed": "#2f1500"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "unit": "4px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xl": "40px",
+                        "container-max": "1280px",
+                        "xs": "4px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {},
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.25", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="bg-surface dark:bg-inverse-surface h-screen w-64 fixed left-0 top-0 border-r border-outline-variant dark:border-outline shadow-sm flex flex-col h-full py-lg px-md z-50">
+<div class="mb-xl">
+<h1 class="text-headline-md font-headline-md text-primary dark:text-primary-fixed-dim">TimeSwap</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Community Exchange</p>
+</div>
+<ul class="flex flex-col gap-sm flex-1">
+<li>
+<a class="flex items-center gap-md py-sm px-md rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md py-sm px-md rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-md text-label-md">Marketplace</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md py-sm px-md rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">handshake</span>
+<span class="font-label-md text-label-md">Swaps</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md py-sm px-md rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-container/10 hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="font-label-md text-label-md">Wallet</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md py-sm px-md rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</li>
+</ul>
+<button class="mt-auto bg-primary-container text-on-primary py-sm px-lg rounded-full font-label-md text-label-md hover:bg-primary transition-colors w-full">
+            Request a Skill
+        </button>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface/80 backdrop-blur-md dark:bg-surface-dim/80 fixed top-0 right-0 w-[calc(100%-16rem)] z-40 shadow-sm flex justify-between items-center h-16 px-gutter">
+<div class="flex items-center gap-md">
+<h2 class="font-headline-sm text-headline-sm text-primary">Time Credits</h2>
+</div>
+<div class="flex items-center gap-md">
+<button class="bg-secondary-container text-on-secondary-container py-xs px-md rounded-full font-label-md text-label-md hover:opacity-80 transition-opacity">
+                    Give Time Credits
+                </button>
+<div class="flex gap-sm">
+<button class="text-on-surface-variant hover:text-primary transition-all hover:opacity-80 p-xs rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all hover:opacity-80 p-xs rounded-full">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden ml-sm">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A detailed headshot portrait of a professional woman with warm lighting and a friendly smile, representing a user profile picture on a high-end SaaS platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD06heH47Tqk-g0t_4LmYedVsBuJVHILQZ0KKajlJmU9JjpaUZaiBdPMgr_xfIkjln9PZgUCgOwSkgsgh_aI2h0Jcf9LNtPMu0uzRchhMx7P43gVDdV637ZAVCWsTyqtoNopyy_UDApqv9q_-6LA1eSk6LMlUyKmQJ7BjathYrEo8NAmfffRKL2Cbj98oQMpIoplpWwGJrdTgYkp40kBhliaDPY4oFSDZZaXe6F7Jfw5eSYi5VknhkIFg"/>
+</div>
+</div>
+</header>
+<!-- Main Dashboard Content -->
+<main class="flex-1 pt-24 px-gutter pb-xl max-w-container-max mx-auto w-full">
+<!-- Wallet Balance Summary (Grid layout) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg mb-xl">
+<!-- Card 1 (Large) -->
+<div class="md:col-span-6 bg-surface-container-lowest rounded-lg border border-outline-variant p-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+<div class="flex items-start justify-between mb-md">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Available Balance</p>
+<h3 class="font-headline-lg text-headline-lg text-primary-container">2.50 Credits</h3>
+</div>
+<div class="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[28px]">schedule</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Equivalent to 2.5 hours of community help</p>
+</div>
+<!-- Card 2 (Locked) -->
+<div class="md:col-span-3 bg-surface-container-lowest rounded-lg border border-outline-variant p-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+<div class="flex items-start justify-between mb-md">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Locked</p>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">1.00 Credit</h3>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">lock</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">In active booking</p>
+</div>
+<!-- Card 3 (Lifetime) -->
+<div class="md:col-span-3 bg-surface-container-lowest rounded-lg border border-outline-variant p-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">Lifetime Impact</p>
+<div class="mb-sm">
+<p class="font-headline-sm text-headline-sm text-primary-container flex items-center gap-xs"><span class="material-symbols-outlined text-sm">arrow_upward</span> 12.0 Hrs</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Shared</p>
+</div>
+</div>
+<div>
+<p class="font-headline-sm text-headline-sm text-secondary-container flex items-center gap-xs"><span class="material-symbols-outlined text-sm">arrow_downward</span> 9.5 Hrs</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Received</p>
+</div>
+</div>
+</div>
+<!-- Immutable Ledger Activity Table -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm overflow-hidden">
+<div class="p-lg border-b border-outline-variant bg-surface/50">
+<h3 class="font-headline-md text-headline-md text-on-surface">Transaction History</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface text-on-surface-variant font-label-md text-label-md border-b border-outline-variant">
+<th class="py-md px-lg font-semibold tracking-wide">Date/Time</th>
+<th class="py-md px-lg font-semibold tracking-wide">Type</th>
+<th class="py-md px-lg font-semibold tracking-wide">Partner &amp; Skill</th>
+<th class="py-md px-lg font-semibold tracking-wide text-right">Amount</th>
+<th class="py-md px-lg font-semibold tracking-wide text-right">Status</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant/50">
+<tr class="hover:bg-surface-variant/30 transition-colors group">
+<td class="py-md px-lg text-on-surface-variant whitespace-nowrap">Dec 20, 2:00 PM</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs px-sm py-unit rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-[12px]">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                        Session Settlement
+                                    </span>
+</td>
+<td class="py-md px-lg font-medium text-on-surface">Alex R. • React Mentorship</td>
+<td class="py-md px-lg text-right font-headline-sm text-primary-container">+1.00 cr</td>
+<td class="py-md px-lg text-right text-on-surface-variant">Settled</td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors group">
+<td class="py-md px-lg text-on-surface-variant whitespace-nowrap">Dec 19, 10:30 AM</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs px-sm py-unit rounded-full bg-surface-variant text-on-surface-variant font-label-md text-[12px]">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                                        Escrow Lock
+                                    </span>
+</td>
+<td class="py-md px-lg font-medium text-on-surface">Sarah J. • Python Data Analysis</td>
+<td class="py-md px-lg text-right font-headline-sm text-on-surface-variant">-1.00 cr</td>
+<td class="py-md px-lg text-right text-on-surface-variant">Locked</td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors group">
+<td class="py-md px-lg text-on-surface-variant whitespace-nowrap">Dec 18, 4:00 PM</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs px-sm py-unit rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-[12px]">
+<span class="material-symbols-outlined text-[14px]">stars</span>
+                                        Starter Grant
+                                    </span>
+</td>
+<td class="py-md px-lg font-medium text-on-surface">TimeSwap Community</td>
+<td class="py-md px-lg text-right font-headline-sm text-primary-container">+1.00 cr</td>
+<td class="py-md px-lg text-right text-on-surface-variant">Settled</td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors group">
+<td class="py-md px-lg text-on-surface-variant whitespace-nowrap">Dec 15, 11:00 AM</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs px-sm py-unit rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-[12px]">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                        Session Settlement
+                                    </span>
+</td>
+<td class="py-md px-lg font-medium text-on-surface">Maria G. • Pottery Intro</td>
+<td class="py-md px-lg text-right font-headline-sm text-primary-container">+1.50 cr</td>
+<td class="py-md px-lg text-right text-on-surface-variant">Settled</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-surface-container-highest border-t border-outline-variant w-full mt-auto flex flex-col md:flex-row justify-between items-center py-lg px-gutter max-w-container-max mx-auto">
+<div class="mb-md md:mb-0">
+<span class="font-headline-sm text-headline-sm text-on-surface mr-md">TimeSwap</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">© 2024 TimeSwap Community. Time is our shared wealth.</span>
+</div>
+<ul class="flex gap-lg">
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary hover:underline transition-all opacity-100 hover:opacity-80" href="#">Community Guidelines</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary hover:underline transition-all opacity-100 hover:opacity-80" href="#">Safety Hub</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary hover:underline transition-all opacity-100 hover:opacity-80" href="#">Help Center</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary hover:underline transition-all opacity-100 hover:opacity-80" href="#">Privacy</a></li>
+</ul>
+</footer>
+</div>
+</body></html>

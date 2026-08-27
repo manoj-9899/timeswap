@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Your Identity - SkillSwap</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#191c1e",
+                      "surface": "#f7f9fb",
+                      "on-primary-container": "#90d8cc",
+                      "on-tertiary-fixed-variant": "#00504a",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#e0e3e5",
+                      "on-tertiary-fixed": "#00201d",
+                      "surface-container-lowest": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#8cd4c8",
+                      "on-secondary": "#ffffff",
+                      "outline": "#6f7977",
+                      "on-error-container": "#93000a",
+                      "primary-container": "#0b6057",
+                      "inverse-surface": "#2d3133",
+                      "surface-bright": "#f7f9fb",
+                      "secondary": "#904d00",
+                      "background": "#f7f9fb",
+                      "surface-tint": "#1b6960",
+                      "on-error": "#ffffff",
+                      "secondary-fixed-dim": "#ffb77d",
+                      "on-primary-fixed": "#00201c",
+                      "secondary-container": "#fe932c",
+                      "on-surface-variant": "#3f4947",
+                      "on-primary-fixed-variant": "#005048",
+                      "surface-dim": "#d8dadc",
+                      "on-surface": "#191c1e",
+                      "tertiary-container": "#006059",
+                      "tertiary-fixed-dim": "#80d5cb",
+                      "on-tertiary-container": "#83d9cf",
+                      "surface-container-low": "#f2f4f6",
+                      "tertiary-fixed": "#9cf2e8",
+                      "surface-container-high": "#e6e8ea",
+                      "tertiary": "#004641",
+                      "error": "#ba1a1a",
+                      "primary": "#00473f",
+                      "secondary-fixed": "#ffdcc3",
+                      "on-secondary-fixed": "#2f1500",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed-dim": "#8cd4c8",
+                      "on-secondary-container": "#663500",
+                      "primary-fixed": "#a8f0e4",
+                      "inverse-on-surface": "#eff1f3",
+                      "surface-container": "#eceef0",
+                      "surface-container-highest": "#e0e3e5",
+                      "on-secondary-fixed-variant": "#6e3900",
+                      "outline-variant": "#bec9c6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "40px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "unit": "4px",
+                      "gutter": "24px",
+                      "container-max": "1280px",
+                      "lg": "24px",
+                      "sm": "8px"
+              },
+              "fontFamily": {},
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.25",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background min-h-screen flex flex-col font-body-md text-on-surface">
+<!-- Top Navigation (Suppressed per instructions for linear/transactional intent) -->
+<!-- Content Canvas -->
+<main class="flex-grow flex items-center justify-center p-md md:p-lg">
+<div class="bg-surface-container-lowest rounded-lg w-full max-w-lg border border-surface-variant" style="box-shadow: 0px 2px 4px rgba(15, 23, 42, 0.04);">
+<!-- Progress Bar -->
+<div class="w-full bg-surface-variant h-1 rounded-t-lg overflow-hidden">
+<div class="bg-primary-container h-full w-1/4 transition-all duration-500"></div>
+</div>
+<div class="p-lg md:p-xl flex flex-col gap-lg">
+<!-- Header -->
+<div class="text-center">
+<span class="material-symbols-outlined text-primary-container text-4xl mb-md">person_add</span>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">Create Your Identity</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Step 1 of 4: Let's set up your profile.</p>
+</div>
+<!-- Form -->
+<form class="flex flex-col gap-md">
+<!-- @handle Input -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="handle">Unique @handle</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-sm text-on-surface-variant font-body-md text-body-md">@</span>
+<input class="w-full pl-lg pr-md py-sm rounded border border-surface-variant bg-surface-container-lowest focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors font-body-md text-body-md text-on-surface outline-none" id="handle" name="handle" placeholder="username" type="text"/>
+</div>
+</div>
+<!-- Display Name Input -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="displayName">Display Name</label>
+<input class="w-full px-md py-sm rounded border border-surface-variant bg-surface-container-lowest focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors font-body-md text-body-md text-on-surface outline-none" id="displayName" name="displayName" placeholder="e.g. Jane Doe" type="text"/>
+</div>
+<!-- Personal Bio Textarea -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="bio">Tell the community about yourself</label>
+<textarea class="w-full px-md py-sm rounded border border-surface-variant bg-surface-container-lowest focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors font-body-md text-body-md text-on-surface outline-none resize-y" id="bio" name="bio" placeholder="I'm a designer looking to learn guitar..." rows="4"></textarea>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Minimum 30 characters</p>
+</div>
+<!-- Actions -->
+<div class="pt-md mt-md border-t border-surface-variant flex justify-end">
+<button class="bg-primary-container hover:opacity-90 active:scale-95 transition-all text-on-primary rounded-full px-lg py-sm font-label-md text-label-md flex items-center gap-xs" type="button">
+                            Next Step
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+</main>
+</body></html>

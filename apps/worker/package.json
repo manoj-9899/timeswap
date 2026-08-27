@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' src/main.ts",
+    "dev": "ts-node src/main.ts",
     "build": "tsc",
     "start": "node dist/main.js",
     "typecheck": "tsc --noEmit",

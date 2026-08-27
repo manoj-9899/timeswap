@@ -8,6 +8,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "clean": "turbo run clean && rm -rf node_modules",
+    "docker:up": "docker compose -f infrastructure/docker-compose.yml up -d",
+    "docker:down": "docker compose -f infrastructure/docker-compose.yml down",
     "db:generate": "pnpm --filter @timeswap/database db:generate",
     "db:migrate": "pnpm --filter @timeswap/database db:migrate",
     "db:seed": "pnpm --filter @timeswap/database db:seed"

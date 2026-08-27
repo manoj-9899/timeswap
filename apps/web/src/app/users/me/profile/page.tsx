@@ -1,0 +1,421 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { apiClient } from '@/lib/api-client';
+
+interface ProfileData {
+  id: string;
+  userId: string;
+  email: string;
+  status: string;
+  displayName: string;
+  handle: string;
+  avatarUrl: string | null;
+  bio: string | null;
+  city: string;
+  generalDistrict: string;
+  deliveryPreference: string;
+  ratingAverage: number;
+  completedExchangesCount: number;
+  reliabilityScore: number;
+  isCompleted: boolean;
+  offeredSkills: Array<{ id: string; name: string }>;
+  learningSkills: Array<{ id: string; name: string }>;
+  wallet: {
+    availableBalance: number;
+    escrowedBalance: number;
+  };
+}
+
+interface SkillCategory {
+  id: string;
+  name: string;
+  skills: Array<{ id: string; name: string }>;
+}
+
+export default function MyProfilePage() {
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [categories, setCategories] = useState<SkillCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  // Edit fields
+  const [displayName, setDisplayName] = useState('');
+  const [bio, setBio] = useState('');
+  const [city, setCity] = useState('');
+  const [generalDistrict, setGeneralDistrict] = useState('');
+  const [deliveryPreference, setDeliveryPreference] = useState<'ONLINE' | 'IN_PERSON' | 'BOTH'>('BOTH');
+
+  // Add skill modal
+  const [showAddSkillModal, setShowAddSkillModal] = useState(false);
+  const [selectedSkillId, setSelectedSkillId] = useState('');
+  const [selectedRole, setSelectedRole] = useState<'OFFERED' | 'LEARNING'>('OFFERED');
+
+  const fetchProfile = async () => {
+    const res = await apiClient<ProfileData>('/users/me/profile');
+    if (res.success && res.data) {
+      setProfile(res.data);
+      setDisplayName(res.data.displayName || '');
+      setBio(res.data.bio || '');
+      setCity(res.data.city || '');
+      setGeneralDistrict(res.data.generalDistrict || '');
+      setDeliveryPreference((res.data.deliveryPreference as any) || 'BOTH');
+    } else {
+      setError(res.error?.message || 'Failed to load profile');
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchProfile();
+    async function loadCategories() {
+      const res = await apiClient<SkillCategory[]>('/skills/categories');
+      if (res.success && res.data) {
+        setCategories(res.data);
+      }
+    }
+    loadCategories();
+  }, []);
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    setSuccessMsg(null);
+
+    const res = await apiClient('/users/me/profile', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        display_name: displayName,
+        bio,
+        city,
+        general_district: generalDistrict,
+        delivery_preference: deliveryPreference,
+      }),
+    });
+
+    setSaving(false);
+    if (res.success) {
+      setSuccessMsg('Profile updated successfully!');
+      fetchProfile();
+    } else {
+      setError(res.error?.message || 'Failed to update profile');
+    }
+  };
+
+  const handleRemoveSkill = async (skillId: string, role: 'OFFERED' | 'LEARNING') => {
+    const res = await apiClient(`/skills/me/skills/${skillId}?role=${role}`, {
+      method: 'DELETE',
+    });
+    if (res.success) {
+      fetchProfile();
+    }
+  };
+
+  const handleAddSkill = async () => {
+    if (!selectedSkillId) return;
+    const res = await apiClient('/skills/me/skills', {
+      method: 'POST',
+      body: JSON.stringify({
+        skill_id: selectedSkillId,
+        role: selectedRole,
+      }),
+    });
+    if (res.success) {
+      setShowAddSkillModal(false);
+      setSelectedSkillId('');
+      fetchProfile();
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#fcfdfd] text-[#191c1b] flex items-center justify-center">
+        <div className="text-[#515f5d] text-sm font-semibold animate-pulse">Loading profile...</div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-[#fcfdfd] text-[#191c1b] flex flex-col items-center justify-center p-4">
+        <div className="p-8 bg-white border border-[#e2e8f7] rounded-3xl text-center space-y-4 shadow-sm">
+          <p className="text-[#93000a] text-sm font-bold">{error || 'Profile not found'}</p>
+          <Link href="/onboarding" className="px-5 py-2.5 bg-[#0b6057] hover:bg-[#00473f] text-white rounded-xl text-xs font-bold shadow-sm inline-block">
+            Go to Onboarding Setup
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#fcfdfd] text-[#191c1b] p-4 sm:p-8">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Top Header Card */}
+        <div className="bg-white border border-[#e2e8f7] rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 rounded-full bg-[#0b6057] flex items-center justify-center text-2xl font-extrabold text-white shadow-sm">
+              {profile.displayName.charAt(0)}
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-extrabold text-[#191c1b]">{profile.displayName}</h1>
+                <span
+                  className={`px-2.5 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider ${
+                    profile.status === 'ACTIVE'
+                      ? 'bg-[#9cf2e8]/40 text-[#00504a] border border-[#80d5cb]'
+                      : 'bg-[#ffdcc3]/50 text-[#663500] border border-[#ffb77d]'
+                  }`}
+                >
+                  {profile.status}
+                </span>
+              </div>
+              <p className="text-[#515f5d] text-xs font-semibold">@{profile.handle}</p>
+              <div className="flex items-center gap-3 text-xs text-[#3f4947]">
+                <span>📍 {profile.city}, {profile.generalDistrict}</span>
+                <span>•</span>
+                <span>⭐ {profile.ratingAverage.toFixed(1)}</span>
+                <span>•</span>
+                <span>{profile.completedExchangesCount} Exchanges</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:items-end space-y-2 w-full sm:w-auto">
+            {/* Wallet summary capsule */}
+            <div className="bg-[#f2f4f2] border border-[#e2e8f7] rounded-2xl p-4 text-center sm:text-right">
+              <span className="text-[10px] text-[#0b6057] uppercase font-bold tracking-wider block">Spendable Wallet Balance</span>
+              <span className="text-2xl font-extrabold text-[#191c1b] block mt-0.5">
+                {profile.wallet.availableBalance.toFixed(2)} Credits
+              </span>
+              <span className="text-[10px] text-[#515f5d] block">
+                1 Credit = 1 Hour • Escrowed: {profile.wallet.escrowedBalance.toFixed(2)} cr
+              </span>
+            </div>
+
+            <Link
+              href={`/profiles/${profile.handle}`}
+              className="text-xs text-[#0b6057] hover:underline font-bold text-right flex items-center gap-1 self-end"
+            >
+              <span>View Public Reputation Card</span>
+              <span className="material-symbols-outlined text-sm">open_in_new</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Form & Skills Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Left 2 Cols: Edit Form */}
+          <div className="md:col-span-2 bg-white border border-[#e2e8f7] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+            <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#515f5d] border-b border-[#e2e8f7] pb-3">
+              Edit Persona & Location
+            </h2>
+
+            {error && <div className="p-3 bg-[#ffdad6] border border-[#ba1a1a]/30 text-[#93000a] text-xs rounded-xl font-bold">{error}</div>}
+            {successMsg && <div className="p-3 bg-[#9cf2e8]/30 border border-[#80d5cb] text-[#00504a] text-xs rounded-xl font-bold">{successMsg}</div>}
+
+            <form onSubmit={handleUpdateProfile} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#191c1b] mb-1">Display Name</label>
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#191c1b] mb-1">Personal Bio</label>
+                <textarea
+                  rows={4}
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  className="w-full p-3.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#191c1b] mb-1">City</label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#191c1b] mb-1">General District</label>
+                  <input
+                    type="text"
+                    value={generalDistrict}
+                    onChange={(e) => setGeneralDistrict(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#191c1b] mb-1">Delivery Preference</label>
+                <select
+                  value={deliveryPreference}
+                  onChange={(e) => setDeliveryPreference(e.target.value as any)}
+                  className="w-full px-3.5 py-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
+                >
+                  <option value="BOTH">Both (Online & In-Person)</option>
+                  <option value="ONLINE">Online Only</option>
+                  <option value="IN_PERSON">In-Person Only</option>
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                disabled={saving}
+                className="w-full py-3 bg-[#0b6057] hover:bg-[#00473f] text-white font-bold text-xs rounded-xl transition-all shadow-sm disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : 'Save Profile Changes'}
+              </button>
+            </form>
+          </div>
+
+          {/* Right Col: Skills Matrix */}
+          <div className="space-y-6">
+            {/* Skills Offered Card */}
+            <div className="bg-white border border-[#e2e8f7] rounded-3xl p-6 shadow-sm space-y-4">
+              <div className="flex justify-between items-center border-b border-[#e2e8f7] pb-3">
+                <h3 className="text-xs font-extrabold text-[#0b6057] uppercase tracking-wider">
+                  Skills Offered
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRole('OFFERED');
+                    setShowAddSkillModal(true);
+                  }}
+                  className="text-[11px] bg-[#9cf2e8]/40 hover:bg-[#9cf2e8]/60 text-[#00504a] font-bold px-2.5 py-1 rounded-lg border border-[#80d5cb]"
+                >
+                  + Add
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {profile.offeredSkills.length === 0 ? (
+                  <p className="text-xs text-[#515f5d]">No skills offered yet.</p>
+                ) : (
+                  profile.offeredSkills.map((s) => (
+                    <span
+                      key={s.id}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#9cf2e8]/40 border border-[#80d5cb] text-[#00504a] text-xs rounded-full font-bold"
+                    >
+                      <span>{s.name}</span>
+                      <button
+                        onClick={() => handleRemoveSkill(s.id, 'OFFERED')}
+                        className="text-[#00504a] hover:text-[#191c1b] font-bold ml-1 text-xs"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Skills Seeking Card */}
+            <div className="bg-white border border-[#e2e8f7] rounded-3xl p-6 shadow-sm space-y-4">
+              <div className="flex justify-between items-center border-b border-[#e2e8f7] pb-3">
+                <h3 className="text-xs font-extrabold text-[#191c1b] uppercase tracking-wider">
+                  Skills Seeking
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRole('LEARNING');
+                    setShowAddSkillModal(true);
+                  }}
+                  className="text-[11px] bg-[#e6e8ea] hover:bg-[#d8dadc] text-[#191c1b] font-bold px-2.5 py-1 rounded-lg border border-[#bec9c6]"
+                >
+                  + Add
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {profile.learningSkills.length === 0 ? (
+                  <p className="text-xs text-[#515f5d]">No learning goals yet.</p>
+                ) : (
+                  profile.learningSkills.map((s) => (
+                    <span
+                      key={s.id}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#e6e8ea] border border-[#bec9c6] text-[#191c1b] text-xs rounded-full font-bold"
+                    >
+                      <span>{s.name}</span>
+                      <button
+                        onClick={() => handleRemoveSkill(s.id, 'LEARNING')}
+                        className="text-[#3f4947] hover:text-[#191c1b] font-bold ml-1 text-xs"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Add Skill Modal */}
+      {showAddSkillModal && (
+        <div className="fixed inset-0 bg-[#191c1b]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white border border-[#e2e8f7] rounded-3xl p-6 max-w-md w-full space-y-4 shadow-xl">
+            <h3 className="text-sm font-extrabold text-[#191c1b] uppercase tracking-wider">
+              Add Skill ({selectedRole === 'OFFERED' ? 'Teaching' : 'Learning'})
+            </h3>
+
+            <div>
+              <label className="block text-xs font-bold text-[#191c1b] mb-1">Select Skill</label>
+              <select
+                value={selectedSkillId}
+                onChange={(e) => setSelectedSkillId(e.target.value)}
+                className="w-full p-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-xs focus:outline-none focus:border-[#0b6057]"
+              >
+                <option value="">-- Choose a Skill --</option>
+                {categories.map((cat) => (
+                  <optgroup key={cat.id} label={cat.name}>
+                    {cat.skills.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowAddSkillModal(false)}
+                className="px-4 py-2 bg-white border border-[#e2e8f7] text-[#3f4947] text-xs rounded-xl font-bold"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleAddSkill}
+                className="px-4 py-2 bg-[#0b6057] hover:bg-[#00473f] text-white text-xs font-bold rounded-xl shadow-sm"
+              >
+                Attach Skill
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

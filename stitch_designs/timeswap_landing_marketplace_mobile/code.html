@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TimeSwap - Mobile Landing &amp; Marketplace</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#a8f0e4",
+                    "on-surface-variant": "#3f4947",
+                    "primary-fixed-dim": "#8cd4c8",
+                    "on-error-container": "#93000a",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#d8dbd9",
+                    "surface-container-high": "#e6e9e7",
+                    "inverse-primary": "#8cd4c8",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#1b6960",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#00201c",
+                    "primary": "#00473f",
+                    "on-error": "#ffffff",
+                    "surface-variant": "#e0e3e1",
+                    "inverse-on-surface": "#eff1ef",
+                    "surface-container-low": "#f2f4f2",
+                    "tertiary-fixed-dim": "#ffb59c",
+                    "tertiary": "#642f1b",
+                    "on-primary-fixed-variant": "#005048",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#904d00",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-subtle": "#515f5d",
+                    "secondary-fixed-dim": "#ffb77d",
+                    "outline-variant": "#bec9c6",
+                    "tertiary-fixed": "#ffdbcf",
+                    "secondary-container": "#fe932c",
+                    "on-surface": "#191c1b",
+                    "on-tertiary-fixed": "#380d01",
+                    "on-secondary-fixed": "#2f1500",
+                    "on-background": "#191c1b",
+                    "primary-container": "#0b6057",
+                    "on-primary-container": "#90d8cc",
+                    "inverse-surface": "#2d3130",
+                    "on-secondary-container": "#663500",
+                    "secondary-fixed": "#ffdcc3",
+                    "outline": "#6f7977",
+                    "surface-bright": "#f7faf8",
+                    "tertiary-container": "#804530",
+                    "border-subtle": "#e2e8f7",
+                    "error": "#ba1a1a",
+                    "surface": "#ffffff",
+                    "on-tertiary-container": "#ffbaa3",
+                    "on-secondary-fixed-variant": "#6e3900",
+                    "on-tertiary-fixed-variant": "#6f3723",
+                    "surface-container-highest": "#e0e3e1",
+                    "surface-container": "#eceeec",
+                    "background": "#fcfdfd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "section-padding": "80px",
+                    "container-max": "1200px",
+                    "card-padding": "24px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "label-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "display-lg": [
+                            "Plus Jakarta Sans"
+                    ]
+            },
+            "fontSize": {
+                    "headline-md": [
+                            "28px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-lg": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "0.02em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg": [
+                            "40px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "display-lg": [
+                            "64px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.03em",
+                                    "fontWeight": "800"
+                            }
+                    ]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+          font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Hide scrollbar for horizontal scrolling elements */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-20 md:pb-0 pt-16">
+<!-- TopAppBar Shared Component -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-container/80 backdrop-blur-md shadow-sm flex items-center justify-between px-gutter h-16 max-w-container-max mx-auto">
+<div class="flex items-center gap-4">
+<button class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity active:scale-95 transition-transform flex items-center justify-center p-2 -ml-2 rounded-full hover:bg-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex items-center gap-2">
+<!-- Using requested DATA image in header -->
+<img alt="Brand Logo" class="h-8 w-8 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V60Ixgr-FyB29l7SUoXd5N4C2kghedhaE6YnIcZHheY-s_9r7ERbZvb8kyVZCnDiVw8pLBnmNDzBva-DIssnGpVeulHYtnyPaUtVd-IvtSnjx1rEjK5DeC2t-qnJJvtWYjileChVodur48wVOcIgcyH3SIoY4Ez7XV5jiLnF69exrklniYdu-B57WHzPnTeQ4mc4MLyhYXaa4ilxa8KQ1mECsMz5T_UieAeCRAjb31GatPFgw4yvkI1Js"/>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">TimeSwap</span>
+</div>
+</div>
+<div class="flex items-center">
+<button class="h-10 w-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 transition-transform overflow-hidden">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</header>
+<main class="max-w-container-max mx-auto">
+<!-- Hero Section -->
+<section class="px-gutter py-section-padding flex flex-col items-center text-center">
+<div class="inline-flex items-center gap-2 bg-secondary-fixed text-on-secondary-fixed px-4 py-1.5 rounded-full mb-6 font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>1 hour = 1 Time Credit</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary mb-6 max-w-2xl">
+                Exchange Your Time &amp; Skills. <br class="hidden md:block"/>
+                Learn Anything Without Money.
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-xl">
+                Join a global community where time is the only currency. Share what you know, earn credits, and learn from experts worldwide.
+            </p>
+<div class="flex flex-col w-full sm:w-auto sm:flex-row gap-4">
+<button class="bg-primary-container text-on-primary bg-primary text-white font-label-lg text-label-lg px-8 py-4 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm">
+                    Join Community
+                </button>
+<button class="bg-transparent border border-outline text-primary font-label-lg text-label-lg px-8 py-4 rounded-xl hover:bg-surface-variant/50 active:scale-95 transition-all">
+                    Browse Marketplace
+                </button>
+</div>
+</section>
+<!-- How it Works Diagram -->
+<section class="px-gutter py-12 bg-surface-container-low rounded-3xl mx-4 mb-section-padding">
+<h2 class="font-headline-md text-headline-md text-center text-primary mb-12">How TimeSwap Works</h2>
+<div class="flex flex-col gap-8 relative max-w-md mx-auto">
+<!-- Connecting Line -->
+<div class="absolute left-8 top-8 bottom-8 w-px bg-outline-variant hidden sm:block"></div>
+<!-- Step 1 -->
+<div class="flex items-start gap-6 relative z-10">
+<div class="w-16 h-16 shrink-0 bg-primary-container text-on-primary-container rounded-2xl flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-3xl">volunteer_activism</span>
+</div>
+<div class="pt-2">
+<h3 class="font-label-lg text-label-lg text-on-surface mb-2 text-lg">Share a Skill</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Offer your expertise to the community. Teach a language, review code, or design a logo.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex items-start gap-6 relative z-10">
+<div class="w-16 h-16 shrink-0 bg-secondary-container text-on-secondary-container rounded-2xl flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-3xl">payments</span>
+</div>
+<div class="pt-2">
+<h3 class="font-label-lg text-label-lg text-on-surface mb-2 text-lg">Earn Time Credits</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">For every hour you spend helping others, you earn one Time Credit in your digital wallet.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex items-start gap-6 relative z-10">
+<div class="w-16 h-16 shrink-0 bg-primary text-on-primary rounded-2xl flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-3xl">school</span>
+</div>
+<div class="pt-2">
+<h3 class="font-label-lg text-label-lg text-on-surface mb-2 text-lg">Learn New Skills</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Spend your credits to learn anything from anyone in the global marketplace. No cash needed.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Marketplace Section -->
+<section class="px-gutter pb-section-padding">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-headline-md text-headline-md text-primary">Marketplace</h2>
+<button class="text-secondary font-label-lg text-label-lg hover:underline flex items-center gap-1">
+                    See All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Search -->
+<div class="relative mb-6">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface border border-outline-variant text-on-surface rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md transition-colors shadow-sm" placeholder="What do you want to learn?" type="text"/>
+</div>
+<!-- Categories -->
+<div class="flex overflow-x-auto gap-3 pb-4 mb-4 no-scrollbar">
+<button class="shrink-0 bg-primary-container text-on-primary-container font-label-lg text-label-lg px-5 py-2.5 rounded-full whitespace-nowrap active:scale-95 transition-transform">
+                    All Skills
+                </button>
+<button class="shrink-0 bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-variant font-label-lg text-label-lg px-5 py-2.5 rounded-full whitespace-nowrap active:scale-95 transition-transform">
+                    Technology
+                </button>
+<button class="shrink-0 bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-variant font-label-lg text-label-lg px-5 py-2.5 rounded-full whitespace-nowrap active:scale-95 transition-transform">
+                    Languages
+                </button>
+<button class="shrink-0 bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-variant font-label-lg text-label-lg px-5 py-2.5 rounded-full whitespace-nowrap active:scale-95 transition-transform">
+                    Design
+                </button>
+<button class="shrink-0 bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-variant font-label-lg text-label-lg px-5 py-2.5 rounded-full whitespace-nowrap active:scale-95 transition-transform">
+                    Music
+                </button>
+</div>
+<!-- Skill Cards List -->
+<div class="flex flex-col gap-4">
+<!-- Card 1 -->
+<div class="bg-surface border border-border-subtle rounded-2xl p-card-padding shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold">
+                                EL
+                            </div>
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface">Elena Rodriguez</h4>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary-container fill">star</span>
+<span>4.9 (24 swaps)</span>
+</div>
+</div>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-[20px] mb-3 text-primary">Conversational Spanish Practice</h3>
+<div class="flex gap-2 mb-6 flex-wrap">
+<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-md text-xs font-semibold">Languages</span>
+<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-md text-xs font-semibold">Beginner Friendly</span>
+</div>
+<div class="flex items-center justify-between border-t border-border-subtle pt-4">
+<div class="flex items-center gap-2 font-label-lg text-label-lg text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span>60 min • <strong class="text-secondary">1.0 CR</strong></span>
+</div>
+<button class="bg-surface border border-primary text-primary hover:bg-primary-container hover:text-on-primary-container px-6 py-2 rounded-lg font-label-lg text-label-lg transition-colors active:scale-95">
+                            Request
+                        </button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface border border-border-subtle rounded-2xl p-card-padding shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+                                MK
+                            </div>
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface">Marcus Kim</h4>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary-container fill">star</span>
+<span>5.0 (42 swaps)</span>
+</div>
+</div>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-[20px] mb-3 text-primary">React.js Code Review &amp; Mentoring</h3>
+<div class="flex gap-2 mb-6 flex-wrap">
+<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-md text-xs font-semibold">Technology</span>
+<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-md text-xs font-semibold">Frontend</span>
+</div>
+<div class="flex items-center justify-between border-t border-border-subtle pt-4">
+<div class="flex items-center gap-2 font-label-lg text-label-lg text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span>45 min • <strong class="text-secondary">0.75 CR</strong></span>
+</div>
+<button class="bg-surface border border-primary text-primary hover:bg-primary-container hover:text-on-primary-container px-6 py-2 rounded-lg font-label-lg text-label-lg transition-colors active:scale-95">
+                            Request
+                        </button>
+</div>
+</div>
+</div>
+<div class="mt-8 flex justify-center">
+<button class="bg-surface border border-outline-variant text-on-surface font-label-lg text-label-lg px-8 py-3 rounded-xl hover:bg-surface-variant transition-colors shadow-sm">
+                    Load More Skills
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer Shared Component (Hidden on mobile via pb-20 on body, visible at bottom on desktop) -->
+<footer class="bg-surface-container-low dark:bg-surface-container-lowest border-t border-outline-variant flex flex-col md:flex-row justify-between items-center px-gutter py-8 w-full max-w-container-max mx-auto hidden md:flex">
+<div class="mb-4 md:mb-0">
+<span class="font-body-md text-body-md text-on-surface-variant">© 2024 TimeSwap Community. All rights reserved.</span>
+</div>
+<div class="flex gap-6">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors hover:underline" href="#">About Us</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors hover:underline" href="#">Community Guidelines</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors hover:underline" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors hover:underline" href="#">Support</a>
+</div>
+</footer>
+<!-- BottomNavBar Shared Component -->
+<!-- Active State: Explore -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface dark:bg-surface-container-highest border-t border-outline-variant dark:border-on-surface-variant/20 shadow-lg fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-4">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-3 py-1 active:scale-90 transition-all hover:bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined fill">explore</span>
+<span class="font-label-lg text-label-lg mt-1 text-[10px]">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant/50 active:scale-90 transition-all rounded-xl px-3 py-1" href="#">
+<span class="material-symbols-outlined">swap_horiz</span>
+<span class="font-label-lg text-label-lg mt-1 text-[10px]">Swaps</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant/50 active:scale-90 transition-all rounded-xl px-3 py-1" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-lg text-label-lg mt-1 text-[10px]">Wallet</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant/50 active:scale-90 transition-all rounded-xl px-3 py-1" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-lg text-label-lg mt-1 text-[10px]">Profile</span>
+</a>
+</nav>
+</body></html>

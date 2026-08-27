@@ -124,7 +124,16 @@ Development must proceed sequentially through 14 structured phases. No phase may
 * **Frontend Work:** Implement Booking Modal, `/bookings` tabbed list, and `/bookings/:id` session container screen.
 * **Test Coverage:** Comprehensive state machine test suite asserting valid transitions and rejecting invalid jumps (e.g., `CANCELLED` $\to$ `COMPLETED`).
 * **User-Visible Milestone:** Requesters can book sessions; Providers can accept or decline; both parties view scheduled sessions on their dashboards.
-* **Definition of Done:** Booking lifecycle operational; duration strictly restricted to 30 or 60 minutes.
+* **Definition of Done:** Booking Implement Phase 7 — Booking & Exchange Lifecycle
+
+Follow AGENTS.md and all authoritative .md files in docs/, especially the Phase 7 requirements in docs/07_IMPLEMENTATION.md. Do not implement anything from later phases or invent unapproved functionality.Make sure the UI is build properly and looks perfect on mobile and web screens,
+
+Implement Phase 7 completely, including required tests and validation.
+
+After implementation, add a concise local testing guide explaining how I can run and test the complete Phase 7 flow on my Ubuntu machine.
+
+Run the required checks and provide a concise summary of changes, test results, and the exact commands I should use to verify Phase 7 locally.
+lifecycle operational; duration strictly restricted to 30 or 60 minutes.
 
 ### Phase 6 — Core Ledger, Wallets & Escrow
 

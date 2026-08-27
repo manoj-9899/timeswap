@@ -8,6 +8,7 @@
     "start": "node dist/main.js",
     "lint": "eslint \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -17,17 +18,27 @@
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.10",
     "@nestjs/platform-fastify": "^11.0.10",
+    "@prisma/client": "^6.19.3",
     "@timeswap/config": "workspace:*",
     "@timeswap/contracts": "workspace:*",
     "@timeswap/database": "workspace:*",
     "@timeswap/types": "workspace:*",
+    "argon2": "^0.45.1",
+    "bullmq": "^5.81.3",
+    "fastify": "^5.12.1",
+    "ioredis": "^5.11.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.4",
     "@nestjs/schematics": "^11.0.2",
+    "@nestjs/testing": "^11.2.3",
     "@types/node": "^22.13.4",
-    "typescript": "^5.7.3"
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.2.2",
+    "typescript": "^5.7.3",
+    "vitest": "^4.1.11"
   }
 }

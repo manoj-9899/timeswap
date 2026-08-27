@@ -107,7 +107,9 @@ model User {
   helpRequests     HelpRequest[]   @relation("RequesterHelpRequests")
   requestedBookings Booking[]      @relation("RequesterBookings")
   providedBookings  Booking[]      @relation("ProviderBookings")
-  notifications    Notification[]
+  notifications          Notification[]
+  verificationTokens     VerificationToken[]
+  passwordResetTokens    PasswordResetToken[]
 
   @@map("users")
 }
@@ -135,6 +137,30 @@ model SessionToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("session_tokens")
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("verification_tokens")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
 }
 
 model Profile {

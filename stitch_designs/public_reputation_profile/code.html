@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reputation Profile - TimeSwap</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#9cf2e8",
+                        "on-tertiary-fixed-variant": "#00504a",
+                        "on-primary-container": "#90d8cc",
+                        "on-surface": "#191c1e",
+                        "secondary": "#904d00",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#00201c",
+                        "on-secondary-fixed": "#2f1500",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "on-surface-variant": "#3f4947",
+                        "on-tertiary-fixed": "#00201d",
+                        "secondary-fixed-dim": "#ffb77d",
+                        "tertiary": "#004641",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#fe932c",
+                        "surface-dim": "#d8dadc",
+                        "on-secondary-container": "#663500",
+                        "on-primary-fixed-variant": "#005048",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed-variant": "#6e3900",
+                        "outline": "#6f7977",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-tint": "#1b6960",
+                        "tertiary-container": "#006059",
+                        "on-error": "#ffffff",
+                        "background": "#f7f9fb",
+                        "outline-variant": "#bec9c6",
+                        "surface": "#f7f9fb",
+                        "primary-fixed-dim": "#8cd4c8",
+                        "surface-container-high": "#e6e8ea",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-error-container": "#93000a",
+                        "primary": "#00473f",
+                        "primary-container": "#0b6057",
+                        "on-tertiary-container": "#83d9cf",
+                        "error-container": "#ffdad6",
+                        "on-background": "#191c1e",
+                        "surface-container": "#eceef0",
+                        "tertiary-fixed-dim": "#80d5cb",
+                        "surface-variant": "#e0e3e5",
+                        "primary-fixed": "#a8f0e4",
+                        "inverse-primary": "#8cd4c8",
+                        "secondary-fixed": "#ffdcc3",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "gutter": "24px",
+                        "xl": "40px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "container-max": "1280px",
+                        "md": "16px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.25", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background h-full font-sans flex font-body-md">
+<!-- SideNavBar -->
+<nav class="hidden lg:flex flex-col h-screen p-lg gap-lg bg-surface-container-low border-r border-outline-variant w-64 fixed left-0 top-0 flat no shadows z-40 transition-all duration-200 ease-in-out">
+<div class="flex items-center gap-md px-md py-sm">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">TimeSwap</span>
+</div>
+<div class="px-md mb-lg">
+<div class="flex items-center gap-md">
+<img alt="TimeSwap User" class="w-10 h-10 rounded-full object-cover shadow-sm border border-outline-variant" data-alt="A small circular avatar of a TimeSwap user, depicted with a warm, welcoming smile in a well-lit modern indoor environment. The lighting is soft and natural, emphasizing the premium humanist aesthetic of the platform. The subject wears casual but professional attire, perfect for a community exchange profile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj3GBTv3xf1fs1W9EllXejY-MeGYIuWkgfTF3jCJpbPr9Eu5ElOGUd3KQ3-ByKRF-9iRz91HfzCS98WG_vKaWULRuqNoHHnHX4c-a87uOZP0iCOX-OqS-LaHu94KbNCSMvpHKyhfr9Kv7FzY6fI5ujL3r4txBTMyRrEJqZlqiEU3iXW8HylafGRh8c_w5nXYvBHW8TA2dab9eqAaOAKIKwS3tQNdJxHMYyQpy_jH2MlIwy9Cpsug2-gQ"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Rivers</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Community Exchange</p>
+</div>
+</div>
+</div>
+<ul class="flex flex-col gap-sm flex-grow">
+<li>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant rounded-lg px-md py-sm transition-all duration-200 ease-in-out" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant rounded-lg px-md py-sm transition-all duration-200 ease-in-out" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">psychology</span>
+<span class="font-label-md text-label-md">Skills Matrix</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant rounded-lg px-md py-sm transition-all duration-200 ease-in-out" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">swap_horiz</span>
+<span class="font-label-md text-label-md">Exchange History</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md bg-primary-container text-on-primary-container rounded-lg px-md py-sm transition-all duration-200 ease-in-out" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">verified_user</span>
+<span class="font-label-md text-label-md">Reputation</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant rounded-lg px-md py-sm transition-all duration-200 ease-in-out" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto flex flex-col gap-md">
+<button class="bg-primary-container text-on-primary font-label-md text-label-md py-md px-lg rounded-full w-full hover:bg-primary transition-colors duration-200 text-center shadow-[0px_2px_4px_rgba(15,23,42,0.04)] hover:shadow-[0px_10px_20px_rgba(15,23,42,0.08)] hover:-translate-y-[2px]">Request a Skill</button>
+<ul>
+<li>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant rounded-lg px-md py-sm transition-all duration-200 ease-in-out" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-grow flex flex-col min-h-screen lg:ml-64 relative overflow-y-auto">
+<!-- TopNavBar (Mobile only for full layout, but structural shell demands it here per JSON logic, adapting to responsive pivot) -->
+<header class="fixed top-0 left-0 lg:left-64 right-0 z-50 flex justify-between items-center px-lg py-sm shadow-sm bg-surface lg:hidden transition-all">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-headline-md font-bold text-primary">TimeSwap</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:bg-surface-container-low p-sm rounded-full transition-colors cursor-pointer active:opacity-80">
+<span aria-hidden="true" class="material-symbols-outlined">account_balance_wallet</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-low p-sm rounded-full transition-colors cursor-pointer active:opacity-80">
+<span aria-hidden="true" class="material-symbols-outlined">notifications</span>
+</button>
+<img alt="User profile" class="w-8 h-8 rounded-full border border-outline-variant object-cover ml-sm cursor-pointer active:opacity-80" data-alt="User profile avatar in top navigation bar, showing a smiling face in a well-lit setting, aligning with the community exchange platform's warm and premium visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD59oh806QJXgKUqefJE9NG0h0pyVOLERbced0024GytiuIMxEynBojqM11Nzy-FfaBWMrPgs-4mRSFNEdsBTCc6dVoOyB1_WVy-PDjp4ttNwazOUpZRupM7NGFORWe1-jVZCQPRqQn-xUPlWCSX61mfHJvYgYrcYAVO_Q08ZmZnyMz2x6SukWCqduIWfdDmTCk2ImOjLQKm9OKm5QZVa4Q18_OfWLuRp9oJa3dbq7sWqIn07MZrDcj2w"/>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="w-full max-w-container-max mx-auto px-md md:px-lg py-xl mt-16 lg:mt-0 flex-grow">
+<!-- Profile Header -->
+<section class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg md:p-xl mb-lg shadow-[0px_2px_4px_rgba(15,23,42,0.04)]">
+<div class="flex flex-col md:flex-row items-start md:items-center gap-lg">
+<img alt="Alex Rivers Profile Picture" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-surface shadow-[0px_10px_20px_rgba(15,23,42,0.08)]" data-alt="A large, high-quality profile portrait of Alex Rivers, a professional yet approachable individual in their 30s. They are standing in a bright, modern San Francisco café with soft, natural lighting coming from a nearby window. The aesthetic is clean, warm, and sophisticated, reflecting the high-trust environment of a premium community platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQlYsFr6BH5FZ3j7-tUiJcJ5_mA9JZKsQ3IYJ5p0-B99vnpgFodUUGGtZ1iit5taW541DzA931I2ipiWAZMjSP7EFR1O83-Mg35F1HN-hcNWxcmJRvf_oWkphoMz-2wYXXRJDtBCqFAxmXNzs6-67naQps5djndMDRkeVHtRA3xCQF0dTbvdkxF8xehMfU-c8Cmg_wWvFYp2CWu6o_lAjEteE6d16luc9O9wxThWqC5ZMxcZStfZ4d8Q"/>
+<div class="flex-grow">
+<div class="flex flex-col md:flex-row md:justify-between md:items-start gap-md">
+<div>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">Alex Rivers</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mb-sm">@alex_dev</p>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span aria-hidden="true" class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-sm text-body-sm">San Francisco, Mission District</span>
+</div>
+</div>
+<div class="flex gap-md md:flex-col md:items-end w-full md:w-auto">
+<button class="bg-primary-container text-on-primary font-label-md text-label-md py-sm px-lg rounded-full hover:bg-primary transition-all duration-200 shadow-[0px_2px_4px_rgba(15,23,42,0.04)] hover:shadow-[0px_10px_20px_rgba(15,23,42,0.08)] hover:-translate-y-[2px] w-full md:w-auto text-center">
+                                    Message
+                                </button>
+<button class="bg-secondary-container text-on-secondary-container font-label-md text-label-md py-sm px-lg rounded-full hover:bg-[#e68528] transition-all duration-200 shadow-[0px_2px_4px_rgba(15,23,42,0.04)] hover:shadow-[0px_10px_20px_rgba(15,23,42,0.08)] hover:-translate-y-[2px] w-full md:w-auto text-center flex items-center justify-center gap-xs">
+<span aria-hidden="true" class="material-symbols-outlined text-[18px]">volunteer_activism</span>
+                                    Give Time Credits
+                                </button>
+</div>
+</div>
+<!-- Trust Metrics Capsule -->
+<div class="mt-lg flex flex-wrap gap-md">
+<div class="flex items-center gap-sm bg-surface-container py-sm px-md rounded-lg border border-outline-variant">
+<span aria-hidden="true" class="material-symbols-outlined text-secondary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">4.9 Rating</p>
+</div>
+</div>
+<div class="flex items-center gap-sm bg-surface-container py-sm px-md rounded-lg border border-outline-variant">
+<span aria-hidden="true" class="material-symbols-outlined text-tertiary-container">swap_calls</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">14 Exchanges</p>
+</div>
+</div>
+<div class="flex items-center gap-sm bg-surface-container py-sm px-md rounded-lg border border-outline-variant">
+<span aria-hidden="true" class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">verified</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">98% Reliability Score</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Layout for Content -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<!-- Left Column (About & Skills) -->
+<div class="lg:col-span-1 flex flex-col gap-lg">
+<!-- About Me -->
+<section class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_2px_4px_rgba(15,23,42,0.04)]">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-md border-b border-outline-variant pb-sm">About Me</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md leading-relaxed">
+                            I'm a frontend developer passionate about building accessible and beautiful user interfaces. When I'm not coding, I'm usually exploring new coffee shops in the Mission or attempting to make pottery. I believe in the power of community and mutual growth through skill sharing.
+                        </p>
+<div class="inline-flex items-center gap-xs bg-tertiary-fixed text-on-tertiary-fixed-variant px-sm py-xs rounded-md border border-primary-fixed-dim">
+<span aria-hidden="true" class="material-symbols-outlined text-[16px]">connect_without_contact</span>
+<span class="font-label-md text-label-md text-[12px]">Online &amp; In-Person</span>
+</div>
+</section>
+<!-- Skills Matrix -->
+<section class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_2px_4px_rgba(15,23,42,0.04)]">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-md border-b border-outline-variant pb-sm">Skills Matrix</h2>
+<div class="mb-md">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-sm uppercase tracking-wider">Skills I Can Share</h3>
+<div class="flex flex-wrap gap-sm">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-md text-label-md py-xs px-sm rounded-full border border-primary-fixed-dim shadow-sm">React.js</span>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-md text-label-md py-xs px-sm rounded-full border border-primary-fixed-dim shadow-sm">Python</span>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-md text-label-md py-xs px-sm rounded-full border border-primary-fixed-dim shadow-sm">UI/UX Design</span>
+</div>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-sm uppercase tracking-wider">Skills I Want to Learn</h3>
+<div class="flex flex-wrap gap-sm">
+<span class="bg-surface-container-high text-on-surface font-label-md text-label-md py-xs px-sm rounded-full border border-outline-variant shadow-sm">Spanish</span>
+<span class="bg-surface-container-high text-on-surface font-label-md text-label-md py-xs px-sm rounded-full border border-outline-variant shadow-sm">Pottery</span>
+<span class="bg-surface-container-high text-on-surface font-label-md text-label-md py-xs px-sm rounded-full border border-outline-variant shadow-sm">Guitar</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column (Reviews Feed) -->
+<div class="lg:col-span-2">
+<section class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_2px_4px_rgba(15,23,42,0.04)] h-full">
+<div class="flex justify-between items-center mb-lg border-b border-outline-variant pb-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Revealed Reviews Feed</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant">14 Total Reviews</span>
+</div>
+<div class="flex flex-col gap-lg">
+<!-- Review Card 1 -->
+<div class="bg-surface rounded-lg p-md border border-outline-variant shadow-[0px_2px_4px_rgba(15,23,42,0.04)] hover:shadow-[0px_10px_20px_rgba(15,23,42,0.08)] hover:-translate-y-[2px] transition-all duration-200">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-md">
+<img alt="Reviewer Avatar" class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A small circular avatar of a reviewer, a friendly young woman with glasses, smiling warmly in a bright indoor setting, fitting the premium humanist visual identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN5U36ez5zsba-6V3udzH5z-CRhcwekF-GJfhL3jN6FpmCFYBPWRNjgtEP6VsdMrKABBy2QgLBxYkV-09riwIWrxuER84BptZ91dPZxrB0Zn1PC2_yTUFBaFL1W6TlkHur5oW6EWKN2TuLVVHuVyuwYBJgfSN-li8rFV2JAfIBcJ7r0-kFn_EF7sVq6qiAV1tpHwz-cMww5XGk8U6DNZxGgFw02ehlJfNHkN4-LQg14JJJh3ZWmdg2yw"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Sarah J.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">React.js Mentorship</p>
+</div>
+</div>
+<div class="flex items-center gap-xs">
+<span aria-hidden="true" class="material-symbols-outlined text-secondary-container text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md text-on-surface">5.0</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md italic">
+                                    "Alex was incredibly patient and helped me understand React hooks in just one session. The way they explain complex concepts is super clear. Highly recommend exchanging time with them!"
+                                </p>
+<div class="flex justify-between items-center border-t border-outline-variant pt-sm">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Oct 12, 2023</span>
+<div class="flex items-center gap-xs bg-surface-container py-xs px-sm rounded-md border border-outline-variant">
+<span aria-hidden="true" class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+<span class="font-label-md text-label-md text-on-surface text-[12px]">Verified: 60 min</span>
+</div>
+</div>
+</div>
+<!-- Review Card 2 -->
+<div class="bg-surface rounded-lg p-md border border-outline-variant shadow-[0px_2px_4px_rgba(15,23,42,0.04)] hover:shadow-[0px_10px_20px_rgba(15,23,42,0.08)] hover:-translate-y-[2px] transition-all duration-200">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-md">
+<img alt="Reviewer Avatar" class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A small circular avatar of a reviewer, an older man with a short beard, looking attentive and happy in a well-lit coffee shop environment, matching the platform's high-trust aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5c5hcZI5BA2F5tA-WM87MI_uqAD-LUPuKvKvv3BIF67rCTtl81j5lPqC3YbKFBdA0zQiWapOA6FMU0-OW5Au8RzTRexafdPLia8JuM63jk_HpXsZLKJOupJtb4s0xvafoUILIN7QIJneb6MGKlvZZMbadfptI1RAS-Wd8rOzie05kSX6xvFKooxi_pLvqhtmOdnm9Cw3IL-PDcxA79EK1XhnxytHMbGqgtGh7y6IkGnXVm3yp3wBf6A"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">David M.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">UI/UX Audit</p>
+</div>
+</div>
+<div class="flex items-center gap-xs">
+<span aria-hidden="true" class="material-symbols-outlined text-secondary-container text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md text-on-surface">4.8</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md italic">
+                                    "Great insights on my portfolio design. Alex pointed out a few crucial accessibility issues I had missed and suggested elegant solutions. A very valuable exchange."
+                                </p>
+<div class="flex justify-between items-center border-t border-outline-variant pt-sm">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Sep 28, 2023</span>
+<div class="flex items-center gap-xs bg-surface-container py-xs px-sm rounded-md border border-outline-variant">
+<span aria-hidden="true" class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+<span class="font-label-md text-label-md text-on-surface text-[12px]">Verified: 90 min</span>
+</div>
+</div>
+</div>
+<!-- Load More -->
+<div class="text-center mt-md">
+<button class="text-primary font-label-md text-label-md hover:underline bg-transparent border border-primary px-lg py-sm rounded-full hover:bg-surface-container-low transition-colors duration-200">
+                                    Load More Reviews
+                                </button>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full flex flex-col md:flex-row justify-between items-center px-lg py-lg mt-auto gap-md max-w-container-max mx-auto border-t border-outline-variant bg-surface-container-highest flat no shadows">
+<div class="flex flex-col items-center md:items-start gap-xs">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">TimeSwap</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface">© 2024 TimeSwap. Empowering Community Reciprocity.</p>
+</div>
+<ul class="flex gap-md font-body-sm text-body-sm">
+<li><a class="text-on-surface-variant hover:text-primary hover:underline transition-opacity duration-150" href="#">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant hover:text-primary hover:underline transition-opacity duration-150" href="#">Terms of Service</a></li>
+<li><a class="text-on-surface-variant hover:text-primary hover:underline transition-opacity duration-150" href="#">Community Guidelines</a></li>
+</ul>
+</footer>
+</main>
+</body></html>
