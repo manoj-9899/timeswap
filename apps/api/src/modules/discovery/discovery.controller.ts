@@ -6,7 +6,7 @@ import {
   discoveryMemberQuerySchema,
 } from '@timeswap/contracts';
 
-@Controller('api/v1/discovery')
+@Controller('discovery')
 export class DiscoveryController {
   constructor(private readonly discoveryService: DiscoveryService) {}
 

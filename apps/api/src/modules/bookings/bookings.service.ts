@@ -87,7 +87,7 @@ export class BookingsService {
     const scheduledStartTime = new Date(dto.scheduled_start_time);
     const durationMinutes = dto.duration_minutes;
     const scheduledEndTime = new Date(scheduledStartTime.getTime() + durationMinutes * 60 * 1000);
-    const creditAmount = durationMinutes === 60 ? 1.0 : 0.5;
+    const creditAmount = Math.max(1.0, durationMinutes / 60);
 
     // Ensure requester has starter credit if eligible
     await this.ledgerService.grantStarterCredit(requesterId);

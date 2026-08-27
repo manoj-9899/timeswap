@@ -89,7 +89,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-4 bg-[#f2f4f2] p-4 rounded-2xl border border-[#e2e8f7]">
           <div className="space-y-0.5">
             <span className="text-[10px] text-[#515f5d] font-bold uppercase tracking-wider block">Available Balance</span>
-            <span className="text-2xl font-extrabold text-[#0b6057]">1.00 CR</span>
+            <span className="text-2xl font-extrabold text-[#0b6057]">1 CR</span>
           </div>
           <Link
             href="/wallet"
@@ -165,7 +165,7 @@ export default function DashboardPage() {
                     {booking.status}
                   </span>
                   <span className="text-xs text-[#904d00] font-extrabold">
-                    {booking.credit_amount.toFixed(2)} CR ({booking.duration_minutes}m)
+                    {Math.round(booking.credit_amount)} CR ({booking.duration_minutes}m)
                   </span>
                 </div>
                 <h3 className="text-sm font-extrabold text-[#191c1b]">

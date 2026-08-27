@@ -103,7 +103,7 @@ export function NavigationShell({ children }: { children: React.ReactNode }) {
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffdcc3]/50 text-[#663500] border border-[#ffb77d] text-xs font-bold transition hover:bg-[#ffdcc3]"
                 >
                   <span className="material-symbols-outlined text-xs text-[#904d00]">schedule</span>
-                  <span>{displayBalance.toFixed(2)} cr</span>
+                  <span>{Math.round(displayBalance)} CR</span>
                 </Link>
 
                 {/* Notifications Bell */}

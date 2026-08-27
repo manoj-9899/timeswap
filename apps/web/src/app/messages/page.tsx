@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api-client';
 
 interface Message {
@@ -26,28 +27,63 @@ interface Thread {
   };
 }
 
-export default function MessagesPage() {
+function MessagesContent() {
+  const searchParams = useSearchParams();
+  const targetBookingId = searchParams.get('bookingId');
+  const targetThreadId = searchParams.get('threadId');
+
   const [threads, setThreads] = useState<Thread[]>([]);
-  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(targetThreadId || null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [sending, setSending] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchThreads();
-  }, []);
+    fetchThreadsAndInitial();
+  }, [targetBookingId, targetThreadId]);
 
-  async function fetchThreads() {
+  // Polling interval for active thread (5 seconds)
+  useEffect(() => {
+    if (!activeThreadId) return;
+    const interval = setInterval(() => {
+      fetchMessages(activeThreadId, false);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [activeThreadId]);
+
+  async function fetchThreadsAndInitial() {
     setLoading(true);
     try {
+      // 1. Fetch user threads list
       const res = await apiClient<Thread[]>('/messages/threads');
+      let threadList: Thread[] = [];
       if (res.success && res.data) {
-        setThreads(res.data);
-        if (res.data.length > 0) {
-          setActiveThreadId(res.data[0].id);
-          fetchMessages(res.data[0].id);
+        threadList = res.data;
+        setThreads(threadList);
+      }
+
+      // 2. Handle target bookingId query if provided
+      if (targetBookingId) {
+        const bookingThreadRes = await apiClient<any>(`/messages/booking/${targetBookingId}`);
+        if (bookingThreadRes.success && bookingThreadRes.data) {
+          const threadData = bookingThreadRes.data;
+          setActiveThreadId(threadData.id);
+          if (Array.isArray(threadData.messages)) {
+            setMessages(threadData.messages);
+          }
+          setLoading(false);
+          return;
         }
+      }
+
+      // 3. Handle direct threadId or select first thread
+      if (targetThreadId) {
+        setActiveThreadId(targetThreadId);
+        fetchMessages(targetThreadId);
+      } else if (threadList.length > 0 && !activeThreadId) {
+        setActiveThreadId(threadList[0].id);
+        fetchMessages(threadList[0].id);
       }
     } catch (err) {
       // Demo fallback
@@ -55,7 +91,7 @@ export default function MessagesPage() {
     setLoading(false);
   }
 
-  async function fetchMessages(threadId: string) {
+  async function fetchMessages(threadId: string, showLoadingState = true) {
     try {
       const res = await apiClient<any>(`/messages/threads/${threadId}`);
       if (res.success && res.data?.messages) {
@@ -77,9 +113,8 @@ export default function MessagesPage() {
 
     setSending(true);
     try {
-      const res = await apiClient(`/messages/threads/${activeThreadId}/messages`, {
-        method: 'POST',
-        body: JSON.stringify({ content_text: newMessage }),
+      const res = await apiClient.post(`/messages/threads/${activeThreadId}/messages`, {
+        content_text: newMessage.trim(),
       });
 
       if (res.success && res.data) {
@@ -227,5 +262,13 @@ export default function MessagesPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-xs text-slate-500">Loading messaging session...</div>}>
+      <MessagesContent />
+    </Suspense>
   );
 }

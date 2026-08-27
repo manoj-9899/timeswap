@@ -25,8 +25,10 @@ interface BookingDetail {
 
 interface Message {
   id: string;
-  sender_id: string;
-  content: string;
+  sender_id?: string;
+  sender_user_id?: string;
+  content?: string;
+  content_text?: string;
   created_at: string;
 }
 
@@ -35,6 +37,7 @@ export default function BookingContainerPage() {
   const router = useRouter();
   const { user } = useAuth();
   const [booking, setBooking] = useState<BookingDetail | null>(null);
+  const [threadId, setThreadId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
@@ -48,6 +51,17 @@ export default function BookingContainerPage() {
 
   const bookingId = params?.id as string;
 
+  const fetchThreadMessages = async (tId: string) => {
+    try {
+      const res = await apiClient<any>(`/messages/threads/${tId}`);
+      if (res.success && res.data?.messages) {
+        setMessages(res.data.messages);
+      }
+    } catch (err) {
+      // Ignore polling error
+    }
+  };
+
   useEffect(() => {
     async function loadBooking() {
       if (!bookingId) return;
@@ -57,10 +71,13 @@ export default function BookingContainerPage() {
         if (res.success && res.data) {
           setBooking(res.data);
         }
-        // Load messages for thread
-        const msgRes = await apiClient<Message[]>(`/messages/thread/${bookingId}`);
-        if (msgRes.success && msgRes.data) {
-          setMessages(msgRes.data);
+        // Load thread for booking
+        const threadRes = await apiClient<any>(`/messages/booking/${bookingId}`);
+        if (threadRes.success && threadRes.data) {
+          setThreadId(threadRes.data.id);
+          if (Array.isArray(threadRes.data.messages)) {
+            setMessages(threadRes.data.messages);
+          }
         }
       } catch (err) {
         // Fallback
@@ -69,6 +86,15 @@ export default function BookingContainerPage() {
     }
     loadBooking();
   }, [bookingId]);
+
+  // Polling interval for chat messages (every 5 seconds)
+  useEffect(() => {
+    if (!threadId) return;
+    const interval = setInterval(() => {
+      fetchThreadMessages(threadId);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [threadId]);
 
   if (loading) {
     return (
@@ -168,15 +194,13 @@ END:VCALENDAR`;
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!threadId || !newMessage.trim()) return;
     try {
-      const res = await apiClient<Message>(`/messages/thread/${bookingId}`, {
-        method: 'POST',
-        body: JSON.stringify({ content: newMessage.trim() }),
+      const res = await apiClient.post(`/messages/threads/${threadId}/messages`, {
+        content_text: newMessage.trim(),
       });
       if (res.success && res.data) {
-        const msg = res.data;
-        setMessages((prev) => [...prev, msg]);
+        setMessages((prev) => [...prev, res.data as Message]);
         setNewMessage('');
       }
     } catch (err) {
@@ -268,7 +292,7 @@ END:VCALENDAR`;
                 </div>
                 <div>
                   <span className="text-[11px] text-[#515f5d] block font-bold uppercase tracking-wider">Escrow Hold</span>
-                  <span className="text-xs font-extrabold text-[#191c1b]">{booking.credit_amount.toFixed(2)} CR</span>
+                  <span className="text-xs font-extrabold text-[#191c1b]">{Math.round(booking.credit_amount)} CR</span>
                 </div>
               </div>
             </div>
@@ -364,7 +388,9 @@ END:VCALENDAR`;
           <div className="flex-1 overflow-y-auto py-4 space-y-3 pr-1">
             {messages.length > 0 ? (
               messages.map((m) => {
-                const isMe = m.sender_id === user?.user_id;
+                const senderId = m.sender_user_id || m.sender_id;
+                const isMe = senderId === user?.user_id;
+                const textContent = m.content_text || m.content;
                 return (
                   <div
                     key={m.id}
@@ -377,7 +403,7 @@ END:VCALENDAR`;
                           : 'bg-[#f2f4f2] text-[#191c1b] rounded-bl-none border border-[#e2e8f7] font-medium'
                       }`}
                     >
-                      {m.content}
+                      {textContent}
                     </div>
                     <span className="text-[9px] text-[#515f5d] mt-1">
                       {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

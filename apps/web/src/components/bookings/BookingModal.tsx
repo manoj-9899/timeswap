@@ -27,7 +27,7 @@ export function BookingModal({
 }: BookingModalProps) {
   const router = useRouter();
   const [scheduledStartTime, setScheduledStartTime] = useState<string>('');
-  const [selectedDuration, setSelectedDuration] = useState<number>(durationMinutes || 60);
+  const [selectedDuration, setSelectedDuration] = useState<number>(60);
   const [selectedFormat, setSelectedFormat] = useState<string>(deliveryFormat === 'BOTH' ? 'ONLINE' : deliveryFormat);
   const [meetingLocationNotes, setMeetingLocationNotes] = useState<string>('');
   const [initialMessage, setInitialMessage] = useState<string>('');
@@ -38,7 +38,7 @@ export function BookingModal({
 
   if (!isOpen) return null;
 
-  const creditCost = selectedDuration === 60 ? 1.0 : 0.5;
+  const creditCost = 1.0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +66,7 @@ export function BookingModal({
         service_offer_id: offerId,
         provider_id: providerId,
         scheduled_start_time: start.toISOString(),
-        duration_minutes: selectedDuration,
+        duration_minutes: 60,
         delivery_format: selectedFormat,
         meeting_location_notes: meetingLocationNotes.trim() || undefined,
         initial_message: initialMessage.trim(),
@@ -114,7 +114,7 @@ export function BookingModal({
             <span className="text-3xl">🎉</span>
             <h3 className="text-lg font-bold text-[#0b6057]">Booking Request Sent!</h3>
             <p className="text-xs text-slate-600">
-              {creditCost.toFixed(2)} Credits locked in escrow. Redirecting to your session container...
+              1 Credit locked in escrow. Redirecting to your session container...
             </p>
           </div>
         ) : (
@@ -125,36 +125,19 @@ export function BookingModal({
               </div>
             )}
 
-            {/* 1. Duration Selection */}
+            {/* 1. Duration Display */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-slate-700">
                 Session Duration & Credit Cost
               </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setSelectedDuration(30)}
-                  className={`p-3 rounded-xl border text-left transition ${
-                    selectedDuration === 30
-                      ? 'bg-teal-50 border-[#0b6057] text-[#0b6057]'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300'
-                  }`}
-                >
-                  <p className="text-xs font-bold">30 Minutes</p>
-                  <p className="text-[11px] font-semibold mt-0.5 text-[#0b6057]">⚡ 0.50 Credit</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedDuration(60)}
-                  className={`p-3 rounded-xl border text-left transition ${
-                    selectedDuration === 60
-                      ? 'bg-teal-50 border-[#0b6057] text-[#0b6057]'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300'
-                  }`}
-                >
-                  <p className="text-xs font-bold">60 Minutes</p>
-                  <p className="text-[11px] font-semibold mt-0.5 text-[#0b6057]">⚡ 1.00 Credit</p>
-                </button>
+              <div className="p-3.5 rounded-xl border border-teal-200 bg-teal-50 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold text-[#0b6057]">60 Minutes (1 Hour)</p>
+                  <p className="text-[11px] font-semibold text-slate-600 mt-0.5">1 Credit = 1 Hour of Service</p>
+                </div>
+                <span className="text-xs font-extrabold text-[#0b6057] bg-white px-3 py-1 rounded-full border border-teal-200">
+                  ⚡ 1 Credit
+                </span>
               </div>
             </div>
 
@@ -231,10 +214,10 @@ export function BookingModal({
             <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-800 space-y-1">
               <div className="flex items-center justify-between font-bold">
                 <span className="text-[#0b6057]">🔒 Escrow Credit Guarantee</span>
-                <span className="text-slate-900">{creditCost.toFixed(2)} Credit</span>
+                <span className="text-slate-900">1 Credit</span>
               </div>
               <p className="text-[11px] text-slate-600 leading-relaxed">
-                {creditCost.toFixed(2)} Credit will be locked in Escrow from your wallet available balance. Credits are held safely and only transferred to {providerName} after the exchange is completed.
+                1 Credit will be locked in Escrow from your wallet available balance. Credits are held safely and only transferred to {providerName} after the exchange is completed.
               </p>
             </div>
 
@@ -252,7 +235,7 @@ export function BookingModal({
                 disabled={loading}
                 className="px-5 py-2.5 rounded-xl bg-[#0b6057] hover:bg-[#084c45] text-white font-semibold text-xs shadow-sm transition disabled:opacity-50"
               >
-                {loading ? 'Reserving Credits...' : 'Confirm & Reserve Credits'}
+                {loading ? 'Reserving Credits...' : 'Confirm & Reserve 1 Credit'}
               </button>
             </div>
           </form>

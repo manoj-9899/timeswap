@@ -144,10 +144,10 @@ export default function OnboardingPage() {
           <div className="bg-[#f2f4f2] border border-[#e2e8f7] rounded-2xl p-5 text-center space-y-1">
             <span className="text-[#904d00] text-xs font-bold uppercase tracking-wider block">Starter Grant Awarded</span>
             <span className="text-4xl font-extrabold text-[#191c1b] block">
-              +{completionData.starter_credit_awarded.toFixed(2)} Credit
+              +{Math.round(completionData.starter_credit_awarded)} Credit
             </span>
             <span className="text-[#515f5d] text-xs block">
-              1.00 Time Credit = 1 Hour of verified community service
+              1 Time Credit = 1 Hour of verified community service
             </span>
           </div>
 

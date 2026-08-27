@@ -96,6 +96,7 @@ model User {
   email            String          @unique
   role             UserRole        @default(USER)
   status           UserStatus      @default(UNVERIFIED)
+  googleId         String?         @unique @map("google_id")
   createdAt        DateTime        @default(now()) @map("created_at")
   updatedAt        DateTime        @updatedAt @map("updated_at")
 

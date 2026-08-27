@@ -328,9 +328,64 @@ export class ProfilesService {
         category: ps.skill.category.name,
       }));
 
+    const serviceOffers = await prisma.serviceOffer.findMany({
+      where: {
+        providerId: profile.userId,
+        status: 'PUBLISHED',
+      },
+      include: {
+        category: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const helpRequests = await prisma.helpRequest.findMany({
+      where: {
+        requesterId: profile.userId,
+        status: 'OPEN',
+      },
+      include: {
+        category: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const reviews = await prisma.review.findMany({
+      where: {
+        subjectUserId: profile.userId,
+        isRevealed: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    });
+
+    const formattedReviews = await Promise.all(
+      reviews.map(async (r) => {
+        const authorProfile = await prisma.profile.findUnique({
+          where: { userId: r.authorUserId },
+        });
+
+        return {
+          id: r.id,
+          rating: r.rating,
+          comment_text: r.commentText,
+          attribute_tags: r.attributeTags,
+          created_at: r.createdAt,
+          author: authorProfile
+            ? {
+                display_name: authorProfile.displayName,
+                handle: authorProfile.handle,
+                avatar_url: authorProfile.avatarUrl,
+              }
+            : { display_name: 'TimeSwap Member' },
+        };
+      }),
+    );
+
     // Mask confidential fields: NO email, password, credentials, or internal tokens exposed
     return {
       id: profile.id,
+      user_id: profile.userId,
       display_name: profile.displayName,
       handle: profile.handle,
       avatar_url: profile.avatarUrl,
@@ -343,6 +398,25 @@ export class ProfilesService {
       reliability_score: Number(profile.reliabilityScore),
       offered_skills: offeredSkills,
       learning_skills: learningSkills,
+      service_offers: serviceOffers.map((so) => ({
+        id: so.id,
+        title: so.title,
+        description: so.description,
+        duration_minutes: so.durationMinutes,
+        format: so.format,
+        category_name: so.category.name,
+        created_at: so.createdAt,
+      })),
+      help_requests: helpRequests.map((hr) => ({
+        id: hr.id,
+        title: hr.title,
+        description: hr.description,
+        duration_minutes: hr.durationMinutes,
+        format: hr.format,
+        category_name: hr.category.name,
+        created_at: hr.createdAt,
+      })),
+      reviews: formattedReviews,
       created_at: profile.createdAt,
     };
   }

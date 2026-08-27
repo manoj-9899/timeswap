@@ -113,7 +113,7 @@ export default function HomePage() {
               href="/register"
               className="px-8 py-3.5 rounded-xl bg-[#0b6057] hover:bg-[#00473f] text-white font-bold text-sm shadow-sm transition"
             >
-              Get Started Now — Claim 1.0 Credit
+              Get Started Now — Claim 1 Credit
             </Link>
           </div>
         </div>

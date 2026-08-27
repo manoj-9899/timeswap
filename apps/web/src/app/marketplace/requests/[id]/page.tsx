@@ -146,7 +146,7 @@ export default function RequestDetailPage() {
               {requestData.preferred_format === 'ONLINE' ? 'Online' : requestData.preferred_format === 'IN_PERSON' ? 'In-Person' : 'Hybrid / Both'}
             </span>
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#b2f5ea]/60 text-[#0b6057] border border-teal-200">
-              {requestData.target_duration === 60 ? '1.0 Credit Reward' : '0.5 Credit Reward'}
+              1.0 Credit Reward (1 Hour)
             </span>
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900 sm:text-4xl leading-tight tracking-tight">

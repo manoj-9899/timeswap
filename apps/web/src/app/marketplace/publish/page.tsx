@@ -79,7 +79,7 @@ export default function PublishListingPage() {
           title: title.trim(),
           description: description.trim(),
           category_id: categoryId,
-          supported_durations: durations,
+          supported_durations: [60],
           delivery_format: deliveryFormat,
           city: city.trim() || undefined,
           general_district: district.trim() || undefined,
@@ -96,7 +96,7 @@ export default function PublishListingPage() {
           title: title.trim(),
           description: description.trim(),
           category_id: categoryId,
-          target_duration: targetDuration,
+          target_duration: 60,
           preferred_format: deliveryFormat,
           urgency,
           city: city.trim() || undefined,
@@ -241,53 +241,17 @@ export default function PublishListingPage() {
           {/* Duration & Non-monetary Economics */}
           <div className="space-y-3 pt-2">
             <label className="block text-xs font-extrabold text-[#191c1b]">
-              {listingType === 'offer' ? 'Supported Session Durations' : 'Target Session Duration'}
+              Session Duration & Non-monetary Valuation
             </label>
-            {listingType === 'offer' ? (
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 cursor-pointer bg-[#f2f4f2] border border-[#e2e8f7] rounded-xl px-4 py-3 hover:border-[#0b6057] transition">
-                  <input
-                    type="checkbox"
-                    checked={durations.includes(30)}
-                    onChange={() => handleDurationToggle(30)}
-                    className="accent-[#0b6057] rounded"
-                  />
-                  <span className="text-xs font-bold text-[#191c1b]">30 min (0.5 Credit)</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer bg-[#f2f4f2] border border-[#e2e8f7] rounded-xl px-4 py-3 hover:border-[#0b6057] transition">
-                  <input
-                    type="checkbox"
-                    checked={durations.includes(60)}
-                    onChange={() => handleDurationToggle(60)}
-                    className="accent-[#0b6057] rounded"
-                  />
-                  <span className="text-xs font-bold text-[#191c1b]">60 min (1.0 Credit)</span>
-                </label>
+            <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-extrabold text-[#0b6057]">60 Minutes (1 Hour)</p>
+                <p className="text-[11px] font-semibold text-slate-600 mt-0.5">Strict Time Standard: 1 Hour = 1 Credit</p>
               </div>
-            ) : (
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 cursor-pointer bg-[#f2f4f2] border border-[#e2e8f7] rounded-xl px-4 py-3 hover:border-[#0b6057] transition">
-                  <input
-                    type="radio"
-                    name="targetDuration"
-                    checked={targetDuration === 30}
-                    onChange={() => setTargetDuration(30)}
-                    className="accent-[#0b6057]"
-                  />
-                  <span className="text-xs font-bold text-[#191c1b]">30 min (0.5 Credit)</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer bg-[#f2f4f2] border border-[#e2e8f7] rounded-xl px-4 py-3 hover:border-[#0b6057] transition">
-                  <input
-                    type="radio"
-                    name="targetDuration"
-                    checked={targetDuration === 60}
-                    onChange={() => setTargetDuration(60)}
-                    className="accent-[#0b6057]"
-                  />
-                  <span className="text-xs font-bold text-[#191c1b]">60 min (1.0 Credit)</span>
-                </label>
-              </div>
-            )}
+              <span className="text-xs font-bold bg-[#0b6057] text-white px-3.5 py-1.5 rounded-full shadow-sm">
+                1 Credit
+              </span>
+            </div>
           </div>
 
           {/* Delivery Format */}

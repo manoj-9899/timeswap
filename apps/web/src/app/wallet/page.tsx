@@ -75,7 +75,7 @@ export default function WalletPage() {
           <div className="flex justify-between items-start">
             <div>
               <span className="text-[#515f5d] text-xs font-bold uppercase tracking-wider block">Available Balance</span>
-              <span className="text-4xl font-extrabold text-[#0b6057] block mt-1">{wallet.available_balance.toFixed(2)} CR</span>
+              <span className="text-4xl font-extrabold text-[#0b6057] block mt-1">{Math.round(wallet.available_balance)} CR</span>
             </div>
             <div className="w-12 h-12 rounded-full bg-[#f2f4f2] text-[#0b6057] flex items-center justify-center">
               <span className="material-symbols-outlined">schedule</span>
@@ -88,7 +88,7 @@ export default function WalletPage() {
           <div className="flex justify-between items-start">
             <div>
               <span className="text-[#515f5d] text-xs font-bold uppercase tracking-wider block">Locked Escrow</span>
-              <span className="text-3xl font-extrabold text-[#904d00] block mt-1">{wallet.escrowed_balance.toFixed(2)} CR</span>
+              <span className="text-3xl font-extrabold text-[#904d00] block mt-1">{Math.round(wallet.escrowed_balance)} CR</span>
             </div>
             <div className="w-10 h-10 rounded-full bg-[#ffdcc3] text-[#904d00] flex items-center justify-center">
               <span className="material-symbols-outlined">lock</span>
@@ -101,7 +101,7 @@ export default function WalletPage() {
           <div className="flex justify-between items-start">
             <div>
               <span className="text-[#515f5d] text-xs font-bold uppercase tracking-wider block">Total Net Worth</span>
-              <span className="text-3xl font-extrabold text-[#191c1b] block mt-1">{wallet.total_balance.toFixed(2)} CR</span>
+              <span className="text-3xl font-extrabold text-[#191c1b] block mt-1">{Math.round(wallet.total_balance)} CR</span>
             </div>
             <div className="w-10 h-10 rounded-full bg-[#f2f4f2] text-[#191c1b] flex items-center justify-center">
               <span className="material-symbols-outlined">account_balance_wallet</span>
@@ -182,7 +182,7 @@ export default function WalletPage() {
                         }`}
                       >
                         {record.entry_type === 'CREDIT' ? '+' : '-'}
-                        {record.amount.toFixed(2)} CR
+                        {Math.round(record.amount)} CR
                       </td>
                     </tr>
                   ))}

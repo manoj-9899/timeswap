@@ -155,6 +155,13 @@ export class MessagingService {
   }
 
   async sendMessage(userId: string, threadId: string, contentText: string) {
+    if (!contentText || typeof contentText !== 'string' || contentText.trim().length === 0) {
+      throw new BadRequestException({
+        code: 'VALIDATION_ERROR',
+        message: 'Message content text cannot be empty.',
+      });
+    }
+
     const thread = await prisma.messageThread.findUnique({
       where: { id: threadId },
       include: { booking: true },

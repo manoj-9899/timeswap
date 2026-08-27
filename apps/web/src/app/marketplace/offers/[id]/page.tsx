@@ -103,7 +103,7 @@ export default function OfferDetailPage() {
               {offer.delivery_format === 'ONLINE' ? 'Online' : offer.delivery_format === 'IN_PERSON' ? 'In-Person' : 'Hybrid / Both'}
             </span>
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#b2f5ea]/60 text-[#0b6057] border border-teal-200">
-              {offer.duration_minutes === 60 ? '1.0 Credit • 60 Min Session' : '0.5 Credit • 30 Min Session'}
+              1.0 Credit • 60 Min Session
             </span>
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900 sm:text-4xl leading-tight tracking-tight">
@@ -129,7 +129,7 @@ export default function OfferDetailPage() {
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
                 All exchanges on TimeSwap use equal human time credits. This 1-on-1 session costs{' '}
-                <strong className="text-[#0b6057]">{offer.duration_minutes === 60 ? '1.0 Credit' : '0.5 Credit'}</strong> from your wallet upon booking completion. Credits cannot be bought or sold.
+                <strong className="text-[#0b6057]">1.0 Credit (1 Hour)</strong> from your wallet upon booking completion. Credits cannot be bought or sold.
               </p>
             </div>
           </div>

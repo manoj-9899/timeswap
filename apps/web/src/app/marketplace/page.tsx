@@ -194,7 +194,7 @@ export default function MarketplacePage() {
               TimeSwap Skill Marketplace
             </h1>
             <p className="text-[#3f4947] mt-1 text-sm sm:text-base">
-              Discover skill offers, community requests, and verified local members. 60 min = 1.0 credit.
+              Discover skill offers, community requests, and verified local members. 60 min = 1 credit.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -294,8 +294,7 @@ export default function MarketplacePage() {
                 disabled={activeTab === 'members'}
               >
                 <option value="">All Durations</option>
-                <option value="30">30 minutes (0.5 Credit)</option>
-                <option value="60">60 minutes (1.0 Credit)</option>
+                <option value="60">60 minutes (1 Credit)</option>
               </select>
             </div>
 
@@ -402,7 +401,7 @@ export default function MarketplacePage() {
                       </div>
                       <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#ffdcc3]/50 text-[#663500] border border-[#ffb77d] text-xs font-bold">
                         <span className="material-symbols-outlined text-xs text-[#904d00]">schedule</span>
-                        {offer.duration_minutes === 60 ? '60 min • 1.0 CR' : '30 min • 0.5 CR'}
+                        60 min • 1.0 CR
                       </div>
                     </div>
 
@@ -461,7 +460,7 @@ export default function MarketplacePage() {
                       </div>
                       <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#ffdcc3]/50 text-[#663500] border border-[#ffb77d] text-xs font-bold">
                         <span className="material-symbols-outlined text-xs text-[#904d00]">schedule</span>
-                        {req.target_duration_minutes === 60 ? '60 min • 1.0 CR' : '30 min • 0.5 CR'}
+                        60 min • 1.0 CR
                       </div>
                     </div>
 

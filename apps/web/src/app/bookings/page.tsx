@@ -187,7 +187,7 @@ export default function BookingsListPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     {getStatusBadge(b.status)}
                     <span className="text-xs font-bold text-[#0b6057] bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
-                      ⚡ {b.credit_amount.toFixed(2)} Credits ({b.duration_minutes} min)
+                      ⚡ {Math.round(b.credit_amount)} {Math.round(b.credit_amount) === 1 ? 'Credit' : 'Credits'} ({b.duration_minutes} min)
                     </span>
                   </div>
 

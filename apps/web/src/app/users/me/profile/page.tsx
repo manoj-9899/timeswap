@@ -45,6 +45,7 @@ export default function MyProfilePage() {
   // Edit fields
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
   const [city, setCity] = useState('');
   const [generalDistrict, setGeneralDistrict] = useState('');
   const [deliveryPreference, setDeliveryPreference] = useState<'ONLINE' | 'IN_PERSON' | 'BOTH'>('BOTH');
@@ -60,6 +61,7 @@ export default function MyProfilePage() {
       setProfile(res.data);
       setDisplayName(res.data.displayName || '');
       setBio(res.data.bio || '');
+      setAvatarUrl(res.data.avatarUrl || '');
       setCity(res.data.city || '');
       setGeneralDistrict(res.data.generalDistrict || '');
       setDeliveryPreference((res.data.deliveryPreference as any) || 'BOTH');
@@ -91,6 +93,7 @@ export default function MyProfilePage() {
       body: JSON.stringify({
         display_name: displayName,
         bio,
+        avatar_url: avatarUrl,
         city,
         general_district: generalDistrict,
         delivery_preference: deliveryPreference,
@@ -152,14 +155,59 @@ export default function MyProfilePage() {
     );
   }
 
+  const completionScore =
+    (bio.trim().length > 0 ? 25 : 0) +
+    (city && generalDistrict ? 25 : 0) +
+    ((profile?.offeredSkills?.length || 0) > 0 ? 25 : 0) +
+    ((profile?.learningSkills?.length || 0) > 0 ? 25 : 0);
+
+  const getAvatarGradient = (name: string) => {
+    const colors = [
+      'bg-gradient-to-br from-[#0b6057] to-[#00473f]',
+      'bg-gradient-to-br from-[#4f46e5] to-[#3730a3]',
+      'bg-gradient-to-br from-[#d97706] to-[#92400e]',
+      'bg-gradient-to-br from-[#059669] to-[#065f46]',
+      'bg-gradient-to-br from-[#dc2626] to-[#991b1b]',
+      'bg-gradient-to-br from-[#7c3aed] to-[#5b21b6]',
+      'bg-gradient-to-br from-[#0284c7] to-[#075985]',
+    ];
+    let hash = 0;
+    for (let i = 0; i < (name || '').length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  };
+
   return (
     <div className="min-h-screen bg-[#fcfdfd] text-[#191c1b] p-4 sm:p-8">
       <div className="max-w-4xl mx-auto space-y-8">
+        {/* Profile Completion Progress Card */}
+        <div className="bg-white border border-[#e2e8f7] rounded-3xl p-5 shadow-sm space-y-2">
+          <div className="flex justify-between items-center text-xs font-extrabold text-[#191c1b]">
+            <span className="flex items-center gap-1.5 text-[#0b6057]">
+              <span className="material-symbols-outlined text-base">verified</span>
+              Profile Completeness Score
+            </span>
+            <span>{completionScore}%</span>
+          </div>
+          <div className="w-full bg-[#f2f4f2] h-2.5 rounded-full overflow-hidden border border-[#e2e8f7]">
+            <div
+              className="bg-[#0b6057] h-full transition-all duration-500 rounded-full"
+              style={{ width: `${completionScore}%` }}
+            />
+          </div>
+          <p className="text-[10px] text-[#515f5d]">
+            {completionScore === 100
+              ? '🎉 Profile is 100% complete! You are fully set to host and request skill exchanges.'
+              : 'Add your bio, location, offered skills, and learning goals to reach 100% profile completeness.'}
+          </p>
+        </div>
+
         {/* Top Header Card */}
         <div className="bg-white border border-[#e2e8f7] rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-full bg-[#0b6057] flex items-center justify-center text-2xl font-extrabold text-white shadow-sm">
-              {profile.displayName.charAt(0)}
+            <div className={`w-16 h-16 rounded-full ${getAvatarGradient(profile.displayName)} flex items-center justify-center text-2xl font-extrabold text-white shadow-md border-2 border-white`}>
+              {profile.displayName.charAt(0).toUpperCase()}
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -190,10 +238,10 @@ export default function MyProfilePage() {
             <div className="bg-[#f2f4f2] border border-[#e2e8f7] rounded-2xl p-4 text-center sm:text-right">
               <span className="text-[10px] text-[#0b6057] uppercase font-bold tracking-wider block">Spendable Wallet Balance</span>
               <span className="text-2xl font-extrabold text-[#191c1b] block mt-0.5">
-                {profile.wallet.availableBalance.toFixed(2)} Credits
+                {Math.round(profile.wallet.availableBalance)} {Math.round(profile.wallet.availableBalance) === 1 ? 'Credit' : 'Credits'}
               </span>
               <span className="text-[10px] text-[#515f5d] block">
-                1 Credit = 1 Hour • Escrowed: {profile.wallet.escrowedBalance.toFixed(2)} cr
+                1 Credit = 1 Hour • Escrowed: {Math.round(profile.wallet.escrowedBalance)} CR
               </span>
             </div>
 

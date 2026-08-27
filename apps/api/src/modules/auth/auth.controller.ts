@@ -3,6 +3,7 @@ import {
   Post,
   Get,
   Body,
+  Query,
   Req,
   Res,
   UsePipes,
@@ -12,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { AuthService } from './auth.service';
+import { GoogleOAuthService } from './google-oauth.service';
 import {
   registerSchema,
   verifyEmailSchema,
@@ -34,7 +36,46 @@ import { SessionAuthGuard } from '../../common/guards/session-auth.guard';
 @Controller('auth')
 @UseGuards(SessionAuthGuard)
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private googleOAuthService: GoogleOAuthService,
+  ) {}
+
+  @Public()
+  @Get('google')
+  async googleAuth(@Res() res: FastifyReply) {
+    const url = this.googleOAuthService.getGoogleAuthUrl();
+    return res.redirect(url, 302);
+  }
+
+  @Public()
+  @Get('google/callback')
+  async googleAuthCallback(
+    @Query('code') code: string,
+    @Res() res: FastifyReply,
+  ) {
+    const clientUrl = process.env.CORS_ORIGIN || 'http://localhost:3000';
+    try {
+      if (!code) {
+        return res.redirect(`${clientUrl}/login?error=missing_google_code`, 302);
+      }
+
+      const googleProfile = await this.googleOAuthService.getGoogleUserProfile(code);
+      const result = await this.authService.handleGoogleAuth(googleProfile);
+
+      res.setCookie('timeswap_session', result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+      });
+
+      return res.redirect(`${clientUrl}/discover`, 302);
+    } catch (err: any) {
+      console.error('[GoogleCallbackError]', err);
+      return res.redirect(`${clientUrl}/login?error=google_auth_failed`, 302);
+    }
+  }
 
   @Public()
   @Post('register')
@@ -69,13 +110,10 @@ export class AuthController {
     @Req() req: FastifyRequest,
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
-    const ipAddress = req.ip;
-    const userAgent = req.headers['user-agent'];
-
-    const result = await this.authService.login(dto, ipAddress, userAgent);
+    const result = await this.authService.login(dto);
 
     // Set signed, HTTP-Only session cookie
-    res.setCookie('timeswap_session', result.sessionToken, {
+    res.setCookie('timeswap_session', result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -84,7 +122,7 @@ export class AuthController {
 
     return {
       success: true,
-      data: result.data,
+      data: result.user,
     };
   }
 
@@ -95,7 +133,9 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
     const sessionToken = req.sessionToken;
-    await this.authService.logout(sessionToken);
+    if (sessionToken) {
+      await this.authService.logout(sessionToken);
+    }
 
     res.clearCookie('timeswap_session', { path: '/' });
 
@@ -108,10 +148,9 @@ export class AuthController {
   @Get('me')
   @HttpCode(HttpStatus.OK)
   async getMe(@CurrentUser() user: any) {
-    const me = await this.authService.getMe(user);
     return {
       success: true,
-      data: me,
+      data: user,
     };
   }
 

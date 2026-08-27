@@ -8,7 +8,7 @@ This document defines the operational directives, architectural boundaries, secu
 
 * **Project Name:** TimeSwap
 * **Product Classification:** Non-monetary, community-driven skill exchange and mutual aid marketplace.
-* **Core Unit of Account:** Human Time ($60\text{ minutes of service} = 1.0\text{ credit}$; $30\text{ minutes} = 0.5\text{ credits}$). Credits are non-convertible, cannot be bought/sold, and carry zero monetary value.
+* **Core Unit of Account:** Human Time ($60\text{ minutes of service} = 1.0\text{ credit}$). Credits are non-convertible, cannot be bought/sold, and carry zero monetary value.
 * **Architecture Pattern:** Modular Monolith within a TypeScript monorepo.
 * **Approved Technology Stack:**
 * Frontend: Next.js (App Router, React, TypeScript, Tailwind CSS)
@@ -194,7 +194,7 @@ The following concepts from early research are explicitly excluded from the MVP 
 
 * **Demurrage / Balance Decay Engines:** No credit carrying charges or automatic deductions on idle balances.
 * **Credit Expiration Schedules:** Credits remain valid indefinitely.
-* **Dynamic / Skill-Based Pricing:** No surge pricing or tier multipliers; all sessions remain $0.50$ credits ($30\text{ min}$) or $1.00$ credit ($60\text{ min}$).
+* **Dynamic / Skill-Based Pricing:** No surge pricing or tier multipliers; all sessions remain $1.00$ credit ($60\text{ min}$).
 * **Multi-Hop Circular Clearing:** No Johnson cycle detection or Hopcroft-Karp graph clearing.
 * **EigenTrust Global Matrix Iterations:** No graph-based trust propagation; use direct bilateral reviews and completion metrics.
 * **Automated WebRTC Telemetry Verification:** No meeting log checking; use dual attestation and auto-settlement timers.
