@@ -227,6 +227,7 @@ describe('Profiles & Skills E2E', () => {
         bio: 'This is a long bio that meets the 30 character requirement for onboarding.',
         city: 'Oakland',
         general_district: 'Downtown',
+        delivery_preference: 'BOTH',
         offered_skill_ids: [skillId],
         learning_skill_ids: [skillId],
       },
@@ -247,7 +248,50 @@ describe('Profiles & Skills E2E', () => {
     const profileBody = JSON.parse(profileRes.payload);
     expect(profileBody.data.status).toBe('ACTIVE');
     expect(profileBody.data.handle).toBe(uniqueHandle);
+    expect(profileBody.data.deliveryPreference).toBe('BOTH');
     expect(profileBody.data.wallet.availableBalance).toBe(1.0);
+  });
+
+  it('GET /api/v1/profiles/check-handle should validate handle availability and suggest alternatives if taken', async () => {
+    // 1. Available handle check
+    const availRes = await app.inject({
+      method: 'GET',
+      url: '/api/v1/profiles/check-handle?handle=clean_new_handle',
+    });
+    expect(availRes.statusCode).toBe(200);
+    const availBody = JSON.parse(availRes.payload);
+    expect(availBody.success).toBe(true);
+    expect(availBody.data.available).toBe(true);
+
+    // 2. Taken handle check
+    const user1ProfileRes = await app.inject({
+      method: 'GET',
+      url: '/api/v1/users/me/profile',
+      headers: { cookie: testUser1Cookie },
+    });
+    const takenHandle = JSON.parse(user1ProfileRes.payload).data.handle;
+
+    const takenRes = await app.inject({
+      method: 'GET',
+      url: `/api/v1/profiles/check-handle?handle=${takenHandle}`,
+    });
+    expect(takenRes.statusCode).toBe(200);
+    const takenBody = JSON.parse(takenRes.payload);
+    expect(takenBody.success).toBe(true);
+    expect(takenBody.data.available).toBe(false);
+    expect(takenBody.data.reason).toBe('HANDLE_TAKEN');
+    expect(Array.isArray(takenBody.data.alternatives)).toBe(true);
+    expect(takenBody.data.alternatives.length).toBeGreaterThan(0);
+
+    // 3. Less than 4 characters handle check
+    const shortRes = await app.inject({
+      method: 'GET',
+      url: '/api/v1/profiles/check-handle?handle=abc',
+    });
+    expect(shortRes.statusCode).toBe(200);
+    const shortBody = JSON.parse(shortRes.payload);
+    expect(shortBody.data.available).toBe(false);
+    expect(shortBody.data.reason).toBe('TOO_SHORT');
   });
 
   it('POST /api/v1/users/me/profile/complete should reject duplicate handle with 409 Conflict', async () => {

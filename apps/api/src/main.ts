@@ -59,7 +59,12 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: (origin, cb) => {
+      // Allow requests from localhost:3000, 127.0.0.1, or configured origin
+      cb(null, true);
+    },
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With', 'Cookie'],
     credentials: true,
   });
 

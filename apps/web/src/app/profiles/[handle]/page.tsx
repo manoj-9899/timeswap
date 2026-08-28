@@ -307,7 +307,7 @@ export default function PublicProfilePage() {
                               {offer.category_name}
                             </span>
                             <span className="text-[10px] font-bold text-[#515f5d]">
-                              ⏱ {offer.duration_minutes} min (1 CR)
+                              ⏱ {offer.duration_minutes} min (1 Credit)
                             </span>
                           </div>
                           <h4 className="text-sm font-bold text-[#191c1b]">{offer.title}</h4>
@@ -345,7 +345,7 @@ export default function PublicProfilePage() {
                               {req.category_name}
                             </span>
                             <span className="text-[10px] font-bold text-[#515f5d]">
-                              ⏱ {req.duration_minutes} min (1 CR)
+                              ⏱ {req.duration_minutes} min (1 Credit)
                             </span>
                           </div>
                           <h4 className="text-sm font-bold text-[#191c1b]">{req.title}</h4>

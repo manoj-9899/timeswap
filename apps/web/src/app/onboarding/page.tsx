@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
+import { useAuth } from '@/providers/auth-provider';
+import LocationSelector from '@/components/LocationSelector';
+import { generateHandleSuggestion } from '@timeswap/contracts';
 
 interface Skill {
   id: string;
@@ -20,6 +23,7 @@ interface SkillCategory {
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const [step, setStep] = useState(1);
   const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [loading, setLoading] = useState(false);
@@ -31,22 +35,95 @@ export default function OnboardingPage() {
 
   // Form states
   const [handle, setHandle] = useState('');
+  const [handleChecking, setHandleChecking] = useState(false);
+  const [handleStatus, setHandleStatus] = useState<{
+    available: boolean;
+    reason?: string;
+    message?: string;
+    alternatives?: string[];
+  } | null>(null);
+
   const [bio, setBio] = useState('');
-  const [city, setCity] = useState('San Francisco');
-  const [generalDistrict, setGeneralDistrict] = useState('Mission District');
+  const [city, setCity] = useState('');
+  const [generalDistrict, setGeneralDistrict] = useState('');
   const [deliveryPreference, setDeliveryPreference] = useState<'ONLINE' | 'IN_PERSON' | 'BOTH'>('BOTH');
   const [offeredSkillIds, setOfferedSkillIds] = useState<string[]>([]);
   const [learningSkillIds, setLearningSkillIds] = useState<string[]>([]);
 
   useEffect(() => {
-    async function loadTaxonomy() {
-      const res = await apiClient<SkillCategory[]>('/skills/categories');
-      if (res.success && res.data) {
-        setCategories(res.data);
+    async function loadData() {
+      // 1. Fetch categories
+      const catRes = await apiClient<SkillCategory[]>('/skills/categories');
+      if (catRes.success && catRes.data) {
+        setCategories(catRes.data);
+      }
+
+      // 2. Fetch authenticated profile to generate initial clean handle suggestion
+      const profRes = await apiClient<any>('/users/me/profile');
+      if (profRes.success && profRes.data) {
+        const p = profRes.data;
+        if (p.handle && !p.handle.startsWith('user_')) {
+          setHandle(p.handle);
+        } else if (p.displayName) {
+          const suggested = generateHandleSuggestion(p.displayName);
+          setHandle(suggested);
+        }
       }
     }
-    loadTaxonomy();
+    loadData();
   }, []);
+
+  // Debounced handle availability check
+  useEffect(() => {
+    const clean = handle.trim().toLowerCase();
+    if (!clean) {
+      setHandleStatus(null);
+      setHandleChecking(false);
+      return;
+    }
+
+    if (clean.length < 4) {
+      setHandleStatus({
+        available: false,
+        reason: 'TOO_SHORT',
+        message: 'Username must be at least 4 characters long.',
+      });
+      setHandleChecking(false);
+      return;
+    }
+
+    if (!/^[a-z0-9_]+$/.test(clean)) {
+      setHandleStatus({
+        available: false,
+        reason: 'INVALID_CHARACTERS',
+        message: 'Username must contain only lowercase letters, numbers, and underscores.',
+      });
+      setHandleChecking(false);
+      return;
+    }
+
+    setHandleChecking(true);
+    const timer = setTimeout(async () => {
+      const res = await apiClient<{
+        available: boolean;
+        reason?: string;
+        message?: string;
+        alternatives?: string[];
+      }>(`/profiles/check-handle?handle=${encodeURIComponent(clean)}`);
+
+      setHandleChecking(false);
+      if (res.success && res.data) {
+        setHandleStatus(res.data);
+      } else {
+        setHandleStatus({
+          available: false,
+          message: 'Failed to verify username availability.',
+        });
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [handle]);
 
   const toggleSkillOffered = (id: string) => {
     setOfferedSkillIds((prev) =>
@@ -65,12 +142,20 @@ export default function OnboardingPage() {
 
     if (step === 1) {
       const handleClean = handle.trim().toLowerCase();
-      if (!handleClean || handleClean.length < 3) {
-        setError('Handle must be at least 3 characters long');
+      if (!handleClean || handleClean.length < 4) {
+        setError('Username must be at least 4 characters long');
         return;
       }
       if (!/^[a-z0-9_]+$/.test(handleClean)) {
-        setError('Handle must only contain lowercase letters, numbers, and underscores');
+        setError('Username must only contain lowercase letters, numbers, and underscores');
+        return;
+      }
+      if (handleChecking) {
+        setError('Please wait while we check username availability');
+        return;
+      }
+      if (handleStatus && !handleStatus.available) {
+        setError(handleStatus.message || 'Please choose an available username');
         return;
       }
       if (!bio || bio.trim().length < 30) {
@@ -114,6 +199,7 @@ export default function OnboardingPage() {
         bio: bio.trim(),
         city: city.trim(),
         general_district: generalDistrict.trim(),
+        delivery_preference: deliveryPreference,
         offered_skill_ids: offeredSkillIds,
         learning_skill_ids: learningSkillIds,
       }),
@@ -126,6 +212,7 @@ export default function OnboardingPage() {
       return;
     }
 
+    await refreshUser();
     setCompletionData(res.data || { profile_completed: true, starter_credit_awarded: 1.0 });
   };
 
@@ -197,7 +284,10 @@ export default function OnboardingPage() {
               {step === 4 && 'Skills You Want to Learn'}
             </h1>
             <p className="text-sm text-[#3f4947]">
-              Step {step} of 4: Let's set up your skill exchange profile.
+              {step === 1 && 'Step 1 of 4: Create your public username and bio.'}
+              {step === 2 && 'Step 2 of 4: Set your location and exchange format preferences.'}
+              {step === 3 && 'Step 3 of 4: Select skills you can teach or offer help with.'}
+              {step === 4 && 'Step 4 of 4: Select skills you want to learn or receive help with.'}
             </p>
           </div>
 
@@ -210,18 +300,71 @@ export default function OnboardingPage() {
           {/* Step 1 */}
           {step === 1 && (
             <div className="space-y-4">
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#191c1b]">Unique @handle</label>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#191c1b]">Choose your username</label>
                 <div className="relative">
                   <span className="absolute left-3 top-2.5 text-[#6f7977] text-sm font-semibold">@</span>
                   <input
                     type="text"
                     value={handle}
                     onChange={(e) => setHandle(e.target.value)}
-                    placeholder="alex_dev"
-                    className="w-full pl-8 pr-4 py-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
+                    placeholder="manojpawar"
+                    className={`w-full pl-8 pr-10 py-2.5 bg-white border rounded-xl text-[#191c1b] text-sm focus:outline-none transition-all ${
+                      handleStatus
+                        ? handleStatus.available
+                          ? 'border-[#0b6057] focus:border-[#0b6057]'
+                          : 'border-red-400 focus:border-red-500'
+                        : 'border-[#e2e8f7] focus:border-[#0b6057]'
+                    }`}
                   />
+                  {handleChecking && (
+                    <span className="material-symbols-outlined absolute right-3 top-2.5 text-base text-[#515f5d] animate-spin">
+                      sync
+                    </span>
+                  )}
                 </div>
+
+                {/* Status Indicator & Suggestions */}
+                {handleStatus && (
+                  <div className="space-y-1.5 pt-1">
+                    {handleChecking ? (
+                      <p className="text-xs text-[#515f5d] font-semibold flex items-center gap-1">
+                        Checking availability...
+                      </p>
+                    ) : handleStatus.available ? (
+                      <p className="text-xs text-[#0b6057] font-bold flex items-center gap-1">
+                        <span className="material-symbols-outlined text-sm">check_circle</span>
+                        Username available
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        <p className="text-xs text-red-600 font-semibold flex items-center gap-1">
+                          <span className="material-symbols-outlined text-sm">error</span>
+                          {handleStatus.message || 'Username is already taken'}
+                        </p>
+                        {handleStatus.alternatives && handleStatus.alternatives.length > 0 && (
+                          <div className="space-y-1">
+                            <span className="text-[11px] font-bold text-[#515f5d] block">
+                              Available Suggestions:
+                            </span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {handleStatus.alternatives.map((alt) => (
+                                <button
+                                  key={alt}
+                                  type="button"
+                                  onClick={() => setHandle(alt)}
+                                  className="px-2.5 py-1 bg-[#9cf2e8]/30 hover:bg-[#9cf2e8]/60 border border-[#80d5cb] text-[#00504a] text-xs font-bold rounded-lg transition-all"
+                                >
+                                  @{alt}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -230,7 +373,7 @@ export default function OnboardingPage() {
                   rows={4}
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  placeholder="I'm a designer looking to learn guitar..."
+                  placeholder="I'm a software developer and designer in Pune looking to swap skills in acoustic guitar..."
                   className="w-full p-3 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
                 />
                 <div className="text-right text-[11px] text-[#6f7977]">
@@ -243,28 +386,14 @@ export default function OnboardingPage() {
           {/* Step 2 */}
           {step === 2 && (
             <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="block text-xs font-bold text-[#191c1b]">City</label>
-                  <input
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    placeholder="San Francisco"
-                    className="w-full px-3 py-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="block text-xs font-bold text-[#191c1b]">General District</label>
-                  <input
-                    type="text"
-                    value={generalDistrict}
-                    onChange={(e) => setGeneralDistrict(e.target.value)}
-                    placeholder="Mission District"
-                    className="w-full px-3 py-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
-                  />
-                </div>
-              </div>
+              <LocationSelector
+                selectedCity={city}
+                selectedDistrict={generalDistrict}
+                onChange={({ city, district }) => {
+                  setCity(city);
+                  setGeneralDistrict(district);
+                }}
+              />
 
               <div className="space-y-2">
                 <label className="block text-xs font-bold text-[#191c1b]">Exchange Format Preference</label>
@@ -295,33 +424,47 @@ export default function OnboardingPage() {
           {/* Step 3 */}
           {step === 3 && (
             <div className="space-y-4">
-              <p className="text-xs text-[#3f4947]">Select skills you can teach or offer help with:</p>
               <div className="max-h-64 overflow-y-auto space-y-4 pr-1">
-                {categories.map((cat) => (
-                  <div key={cat.id} className="space-y-2">
-                    <h3 className="text-xs font-bold text-[#0b6057] uppercase tracking-wider">{cat.name}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {cat.skills.map((skill) => {
-                        const selected = offeredSkillIds.includes(skill.id);
-                        return (
-                          <button
-                            key={skill.id}
-                            type="button"
-                            onClick={() => toggleSkillOffered(skill.id)}
-                            className={`px-3 py-1.5 rounded-lg border text-xs transition-all ${
-                              selected
-                                ? 'bg-[#0b6057] text-white border-[#0b6057] font-semibold'
-                                : 'bg-[#f2f4f2] border-[#e2e8f7] text-[#3f4947] hover:border-[#0b6057]'
-                            }`}
-                          >
-                            {selected ? '✓ ' : '+ '}
-                            {skill.name}
-                          </button>
-                        );
-                      })}
+                {categories
+                  .map((cat) => ({
+                    ...cat,
+                    skills: (cat.skills || []).filter(
+                      (s) =>
+                        !s.name.toLowerCase().includes('dispute') &&
+                        !s.name.toLowerCase().includes('test'),
+                    ),
+                  }))
+                  .filter(
+                    (cat) =>
+                      cat.skills.length > 0 &&
+                      !cat.name.toLowerCase().includes('dispute') &&
+                      !cat.name.toLowerCase().includes('test'),
+                  )
+                  .map((cat) => (
+                    <div key={cat.id} className="space-y-2">
+                      <h3 className="text-xs font-bold text-[#0b6057] uppercase tracking-wider">{cat.name}</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {cat.skills.map((skill) => {
+                          const selected = offeredSkillIds.includes(skill.id);
+                          return (
+                            <button
+                              key={skill.id}
+                              type="button"
+                              onClick={() => toggleSkillOffered(skill.id)}
+                              className={`px-3 py-1.5 rounded-lg border text-xs transition-all ${
+                                selected
+                                  ? 'bg-[#0b6057] text-white border-[#0b6057] font-semibold'
+                                  : 'bg-[#f2f4f2] border-[#e2e8f7] text-[#3f4947] hover:border-[#0b6057]'
+                              }`}
+                            >
+                              {selected ? '✓ ' : '+ '}
+                              {skill.name}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
           )}
@@ -329,33 +472,47 @@ export default function OnboardingPage() {
           {/* Step 4 */}
           {step === 4 && (
             <div className="space-y-4">
-              <p className="text-xs text-[#3f4947]">Select skills you want to learn or receive mentorship in:</p>
               <div className="max-h-64 overflow-y-auto space-y-4 pr-1">
-                {categories.map((cat) => (
-                  <div key={cat.id} className="space-y-2">
-                    <h3 className="text-xs font-bold text-[#0b6057] uppercase tracking-wider">{cat.name}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {cat.skills.map((skill) => {
-                        const selected = learningSkillIds.includes(skill.id);
-                        return (
-                          <button
-                            key={skill.id}
-                            type="button"
-                            onClick={() => toggleSkillLearning(skill.id)}
-                            className={`px-3 py-1.5 rounded-lg border text-xs transition-all ${
-                              selected
-                                ? 'bg-[#0b6057] text-white border-[#0b6057] font-semibold'
-                                : 'bg-[#f2f4f2] border-[#e2e8f7] text-[#3f4947] hover:border-[#0b6057]'
-                            }`}
-                          >
-                            {selected ? '✓ ' : '+ '}
-                            {skill.name}
-                          </button>
-                        );
-                      })}
+                {categories
+                  .map((cat) => ({
+                    ...cat,
+                    skills: (cat.skills || []).filter(
+                      (s) =>
+                        !s.name.toLowerCase().includes('dispute') &&
+                        !s.name.toLowerCase().includes('test'),
+                    ),
+                  }))
+                  .filter(
+                    (cat) =>
+                      cat.skills.length > 0 &&
+                      !cat.name.toLowerCase().includes('dispute') &&
+                      !cat.name.toLowerCase().includes('test'),
+                  )
+                  .map((cat) => (
+                    <div key={cat.id} className="space-y-2">
+                      <h3 className="text-xs font-bold text-[#0b6057] uppercase tracking-wider">{cat.name}</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {cat.skills.map((skill) => {
+                          const selected = learningSkillIds.includes(skill.id);
+                          return (
+                            <button
+                              key={skill.id}
+                              type="button"
+                              onClick={() => toggleSkillLearning(skill.id)}
+                              className={`px-3 py-1.5 rounded-lg border text-xs transition-all ${
+                                selected
+                                  ? 'bg-[#0b6057] text-white border-[#0b6057] font-semibold'
+                                  : 'bg-[#f2f4f2] border-[#e2e8f7] text-[#3f4947] hover:border-[#0b6057]'
+                              }`}
+                            >
+                              {selected ? '✓ ' : '+ '}
+                              {skill.name}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
           )}

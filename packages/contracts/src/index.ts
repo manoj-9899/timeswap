@@ -9,3 +9,7 @@ export * from './booking/booking.contract.js';
 export * from './ledger/ledger.contract.js';
 export * from './dispute/dispute.contract.js';
 export * from './review/review.contract.js';
+export * from './location/maharashtra-locations.js';
+export * from './location/location.contract.js';
+export * from './notifications/notifications.contract.js';
+

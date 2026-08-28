@@ -1,0 +1,40 @@
+[
+  { "pincode": "416008", "districtLgdCode": 498, "talukaLgdCode": 4981, "localityName": "Rajarampuri" },
+  { "pincode": "416001", "districtLgdCode": 498, "talukaLgdCode": 4981, "localityName": "Shahupuri" },
+  { "pincode": "416003", "districtLgdCode": 498, "talukaLgdCode": 4981, "localityName": "Laxmipuri" },
+  { "pincode": "416234", "districtLgdCode": 498, "talukaLgdCode": 4982, "localityName": "Kagal Town" },
+  { "pincode": "416115", "districtLgdCode": 498, "talukaLgdCode": 4983, "localityName": "Ichalkaranji" },
+
+  { "pincode": "411038", "districtLgdCode": 521, "talukaLgdCode": 5211, "localityName": "Kothrud" },
+  { "pincode": "411057", "districtLgdCode": 521, "talukaLgdCode": 5211, "localityName": "Hinjewadi" },
+  { "pincode": "411045", "districtLgdCode": 521, "talukaLgdCode": 5211, "localityName": "Baner" },
+  { "pincode": "411033", "districtLgdCode": 521, "talukaLgdCode": 5211, "localityName": "Wakad" },
+  { "pincode": "411028", "districtLgdCode": 521, "talukaLgdCode": 5211, "localityName": "Hadapsar" },
+  { "pincode": "411005", "districtLgdCode": 521, "talukaLgdCode": 5212, "localityName": "Shivaji Nagar" },
+  { "pincode": "411001", "districtLgdCode": 521, "talukaLgdCode": 5212, "localityName": "Koregaon Park" },
+
+  { "pincode": "400050", "districtLgdCode": 518, "talukaLgdCode": 5183, "localityName": "Bandra West" },
+  { "pincode": "400051", "districtLgdCode": 518, "talukaLgdCode": 5183, "localityName": "Bandra East" },
+  { "pincode": "400053", "districtLgdCode": 518, "talukaLgdCode": 5181, "localityName": "Andheri West" },
+  { "pincode": "400069", "districtLgdCode": 518, "talukaLgdCode": 5181, "localityName": "Andheri East" },
+  { "pincode": "400076", "districtLgdCode": 518, "talukaLgdCode": 5181, "localityName": "Powai" },
+  { "pincode": "400092", "districtLgdCode": 518, "talukaLgdCode": 5182, "localityName": "Borivali West" },
+
+  { "pincode": "400005", "districtLgdCode": 517, "talukaLgdCode": 5171, "localityName": "Colaba" },
+  { "pincode": "400028", "districtLgdCode": 517, "talukaLgdCode": 5171, "localityName": "Dadar West" },
+  { "pincode": "400018", "districtLgdCode": 517, "talukaLgdCode": 5171, "localityName": "Worli" },
+
+  { "pincode": "400601", "districtLgdCode": 525, "talukaLgdCode": 5251, "localityName": "Thane West" },
+  { "pincode": "400607", "districtLgdCode": 525, "talukaLgdCode": 5251, "localityName": "Ghodbunder Road" },
+  { "pincode": "400703", "districtLgdCode": 522, "talukaLgdCode": 5222, "localityName": "Vashi" },
+  { "pincode": "400706", "districtLgdCode": 522, "talukaLgdCode": 5222, "localityName": "Nerul" },
+  { "pincode": "400710", "districtLgdCode": 522, "talukaLgdCode": 5222, "localityName": "Kharghar" },
+
+  { "pincode": "440010", "districtLgdCode": 514, "talukaLgdCode": 5141, "localityName": "Dharampeth" },
+  { "pincode": "440001", "districtLgdCode": 514, "talukaLgdCode": 5141, "localityName": "Sitabuldi" },
+
+  { "pincode": "422005", "districtLgdCode": 519, "talukaLgdCode": 5191, "localityName": "College Road" },
+  { "pincode": "422013", "districtLgdCode": 519, "talukaLgdCode": 5191, "localityName": "Gangapur Road" },
+
+  { "pincode": "431001", "districtLgdCode": 492, "talukaLgdCode": 4921, "localityName": "CIDCO Aurangabad" }
+]

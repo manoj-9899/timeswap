@@ -30,9 +30,16 @@ export function NavigationShell({ children }: { children: React.ReactNode }) {
 
   const fetchWalletAndNotifications = async () => {
     try {
-      const res = await apiClient<WalletSummary>('/wallet/balance');
-      if (res.success && res.data) {
-        setWallet(res.data);
+      const [walletRes, notifRes] = await Promise.all([
+        apiClient<WalletSummary>('/wallet/balance').catch(() => null),
+        apiClient<{ unread_count: number }>('/notifications/unread-count').catch(() => null),
+      ]);
+
+      if (walletRes && walletRes.success && walletRes.data) {
+        setWallet(walletRes.data);
+      }
+      if (notifRes && notifRes.success && notifRes.data) {
+        setUnreadNotifications(notifRes.data.unread_count || 0);
       }
     } catch (err) {
       // Fallback
@@ -41,7 +48,6 @@ export function NavigationShell({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { label: 'Discover', href: '/discover' },
-    { label: 'Marketplace', href: '/marketplace' },
     { label: 'Bookings', href: '/bookings' },
     { label: 'Messages', href: '/messages' },
     { label: 'Wallet', href: '/wallet' },
@@ -56,6 +62,12 @@ export function NavigationShell({ children }: { children: React.ReactNode }) {
   );
   const displayBalance = isNaN(currentAvailableBalance) ? 1.0 : currentAvailableBalance;
 
+  const logoHref = user
+    ? user.profile?.is_completed === false
+      ? '/onboarding'
+      : '/dashboard'
+    : '/';
+
   return (
     <div className="min-h-screen bg-[#fcfdfd] text-[#191c1b] flex flex-col font-sans">
       {/* Top Navigation Bar */}
@@ -63,7 +75,7 @@ export function NavigationShell({ children }: { children: React.ReactNode }) {
         <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
           {/* Brand Logo & Wordmark */}
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2.5 group">
+            <Link href={logoHref} className="flex items-center gap-2.5 group">
               <div className="w-8 h-8 rounded-lg bg-[#0b6057] text-white flex items-center justify-center font-extrabold text-sm shadow-sm group-hover:bg-[#00473f] transition">
                 ⚡
               </div>
@@ -103,7 +115,7 @@ export function NavigationShell({ children }: { children: React.ReactNode }) {
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffdcc3]/50 text-[#663500] border border-[#ffb77d] text-xs font-bold transition hover:bg-[#ffdcc3]"
                 >
                   <span className="material-symbols-outlined text-xs text-[#904d00]">schedule</span>
-                  <span>{Math.round(displayBalance)} CR</span>
+                  <span>{Math.round(displayBalance)} {Math.round(displayBalance) === 1 ? 'Credit' : 'Credits'}</span>
                 </Link>
 
                 {/* Notifications Bell */}
@@ -114,7 +126,9 @@ export function NavigationShell({ children }: { children: React.ReactNode }) {
                 >
                   <span className="material-symbols-outlined text-xl">notifications</span>
                   {unreadNotifications > 0 && (
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#ba1a1a] rounded-full" />
+                    <span className="absolute -top-0.5 -right-0.5 px-1.5 py-0.5 bg-[#ba1a1a] text-white text-[10px] font-extrabold rounded-full min-w-[18px] text-center leading-none border-2 border-white shadow-xs">
+                      {unreadNotifications > 99 ? '99+' : unreadNotifications}
+                    </span>
                   )}
                 </Link>
 
@@ -203,7 +217,7 @@ export function NavigationShell({ children }: { children: React.ReactNode }) {
             <div className="flex flex-col gap-2">
               <h4 className="font-bold text-[#191c1b] mb-1">Platform</h4>
               <Link href="/discover" className="hover:text-[#0b6057] transition">Discover Skills</Link>
-              <Link href="/marketplace" className="hover:text-[#0b6057] transition">Marketplace</Link>
+              <Link href="/marketplace/publish" className="hover:text-[#0b6057] transition">Post an Offer</Link>
             </div>
             <div className="flex flex-col gap-2">
               <h4 className="font-bold text-[#191c1b] mb-1">Support</h4>

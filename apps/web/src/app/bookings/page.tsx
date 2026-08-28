@@ -26,7 +26,7 @@ interface Booking {
 }
 
 export default function BookingsListPage() {
-  const [activeTab, setActiveTab] = useState<'upcoming' | 'needs_attestation' | 'past' | 'all'>('upcoming');
+  const [activeTab, setActiveTab] = useState<'all' | 'upcoming' | 'needs_attestation' | 'past'>('all');
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -127,6 +127,16 @@ export default function BookingsListPage() {
           {/* Navigation Tabs */}
           <div className="flex flex-wrap space-x-1 sm:space-x-2 bg-white p-1.5 rounded-2xl border border-slate-200 text-xs font-semibold shadow-sm">
             <button
+              onClick={() => setActiveTab('all')}
+              className={`px-3.5 py-2 rounded-xl transition ${
+                activeTab === 'all'
+                  ? 'bg-[#0b6057] text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              All Sessions
+            </button>
+            <button
               onClick={() => setActiveTab('upcoming')}
               className={`px-3.5 py-2 rounded-xl transition ${
                 activeTab === 'upcoming'
@@ -155,16 +165,6 @@ export default function BookingsListPage() {
               }`}
             >
               Past History
-            </button>
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`px-3.5 py-2 rounded-xl transition ${
-                activeTab === 'all'
-                  ? 'bg-[#0b6057] text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              All Sessions
             </button>
           </div>
         </div>

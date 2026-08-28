@@ -85,6 +85,14 @@ enum DisputeOutcome {
   SPLIT_50_50
 }
 
+enum LocalityType {
+  VILLAGE
+  MUNICIPAL_CORPORATION
+  MUNICIPAL_COUNCIL
+  NAGAR_PANCHAYAT
+  TOWN
+}
+
 enum MessageThreadStatus {
   ACTIVE
   READ_ONLY
@@ -476,3 +484,68 @@ model AuditLog {
 
   @@map("audit_logs")
 }
+
+model District {
+  id        String   @id @default(uuid())
+  lgdCode   Int      @unique @map("lgd_code")
+  nameEn    String   @map("name_en")
+  nameMr    String   @map("name_mr")
+  stateCode String   @default("MH") @map("state_code")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  talukas         Taluka[]
+  pincodeMappings PincodeMapping[]
+
+  @@map("location_districts")
+}
+
+model Taluka {
+  id         String   @id @default(uuid())
+  lgdCode    Int      @unique @map("lgd_code")
+  districtId String   @map("district_id")
+  nameEn     String   @map("name_en")
+  nameMr     String   @map("name_mr")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  district        District         @relation(fields: [districtId], references: [id], onDelete: Restrict)
+  localities      Locality[]
+  pincodeMappings PincodeMapping[]
+
+  @@index([districtId])
+  @@map("location_talukas")
+}
+
+model Locality {
+  id        String       @id @default(uuid())
+  lgdCode   Int?         @map("lgd_code")
+  talukaId  String       @map("taluka_id")
+  nameEn    String       @map("name_en")
+  nameMr    String?      @map("name_mr")
+  type      LocalityType @default(VILLAGE)
+  pincode   String?      @db.VarChar(6)
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  taluka Taluka @relation(fields: [talukaId], references: [id], onDelete: Restrict)
+
+  @@index([talukaId])
+  @@index([pincode])
+  @@index([nameEn])
+  @@map("location_localities")
+}
+
+model PincodeMapping {
+  id           String   @id @default(uuid())
+  pincode      String   @db.VarChar(6)
+  districtId   String   @map("district_id")
+  talukaId     String   @map("taluka_id")
+  localityName String   @map("locality_name")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  district District @relation(fields: [districtId], references: [id], onDelete: Restrict)
+  taluka   Taluka   @relation(fields: [talukaId], references: [id], onDelete: Restrict)
+
+  @@index([pincode])
+  @@index([districtId, talukaId])
+  @@map("location_pincodes")
+}
+

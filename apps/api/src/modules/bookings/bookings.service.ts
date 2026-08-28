@@ -7,10 +7,14 @@ import {
 import { prisma, BookingStatus, DeliveryFormat } from '@timeswap/database';
 import { CreateBookingDto, CancelBookingDto } from '@timeswap/contracts';
 import { LedgerService } from '../ledger/ledger.service.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
 
 @Injectable()
 export class BookingsService {
-  constructor(private readonly ledgerService: LedgerService) {}
+  constructor(
+    private readonly ledgerService: LedgerService,
+    private readonly notificationsService: NotificationsService,
+  ) {}
 
   async createBooking(userId: string, dto: CreateBookingDto) {
     let providerId: string;
@@ -122,6 +126,18 @@ export class BookingsService {
     // Lock Escrow Credits
     await this.ledgerService.lockEscrow(requesterId, booking.id, creditAmount);
 
+    try {
+      await this.notificationsService.createNotification({
+        userId: providerId,
+        notificationType: 'BOOKING_REQUESTED',
+        title: 'New Booking Request',
+        bodyText: `${booking.requester.profile?.displayName || 'A member'} requested a ${durationMinutes} min session.`,
+        actionUrl: `/bookings/${booking.id}`,
+      });
+    } catch (err) {
+      // Non-blocking background notification safety catch
+    }
+
     return this.formatBookingResponse(booking);
   }
 
@@ -220,6 +236,18 @@ export class BookingsService {
       },
     });
 
+    try {
+      await this.notificationsService.createNotification({
+        userId: updated.requesterId,
+        notificationType: 'BOOKING_CONFIRMED',
+        title: 'Booking Confirmed!',
+        bodyText: `${updated.provider.profile?.displayName || 'Your provider'} accepted your session request.`,
+        actionUrl: `/bookings/${bookingId}`,
+      });
+    } catch (err) {
+      // Non-blocking notification safety catch
+    }
+
     return this.formatBookingResponse(updated);
   }
 
@@ -273,6 +301,20 @@ export class BookingsService {
         provider: { include: { profile: true } },
       },
     });
+
+    if (updated) {
+      try {
+        await this.notificationsService.createNotification({
+          userId: updated.requesterId,
+          notificationType: 'BOOKING_CANCELLED',
+          title: 'Booking Request Declined',
+          bodyText: `${updated.provider.profile?.displayName || 'The provider'} declined your booking request. Your escrowed credits have been refunded.`,
+          actionUrl: `/bookings/${bookingId}`,
+        });
+      } catch (err) {
+        // Non-blocking notification catch
+      }
+    }
 
     return this.formatBookingResponse(updated);
   }
@@ -339,6 +381,23 @@ export class BookingsService {
       },
     });
 
+    try {
+      const recipientId = userId === updated.requesterId ? updated.providerId : updated.requesterId;
+      const cancellingUserName = userId === updated.requesterId
+        ? (updated.requester.profile?.displayName || 'Your exchange partner')
+        : (updated.provider.profile?.displayName || 'Your exchange partner');
+
+      await this.notificationsService.createNotification({
+        userId: recipientId,
+        notificationType: 'BOOKING_CANCELLED',
+        title: 'Booking Cancelled',
+        bodyText: `${cancellingUserName} cancelled the upcoming session.`,
+        actionUrl: `/bookings/${bookingId}`,
+      });
+    } catch (err) {
+      // Non-blocking notification catch
+    }
+
     return this.formatBookingResponse(updated);
   }
 
@@ -399,6 +458,27 @@ export class BookingsService {
         provider: { include: { profile: true } },
       },
     });
+
+    if (updated) {
+      try {
+        const recipientId = userId === updated.requesterId ? updated.providerId : updated.requesterId;
+        const attesterName = userId === updated.requesterId
+          ? (updated.requester.profile?.displayName || 'Your partner')
+          : (updated.provider.profile?.displayName || 'Your partner');
+
+        await this.notificationsService.createNotification({
+          userId: recipientId,
+          notificationType: updated.status === BookingStatus.COMPLETED ? 'SESSION_SETTLED' : 'COMPLETION_REQUIRED',
+          title: updated.status === BookingStatus.COMPLETED ? 'Session Completed & Settled' : 'Session Attested',
+          bodyText: updated.status === BookingStatus.COMPLETED
+            ? `Session completion was attested by both parties. Time credits have been settled!`
+            : `${attesterName} attested session completion. Please attest to finalize session settlement.`,
+          actionUrl: `/bookings/${bookingId}`,
+        });
+      } catch (err) {
+        // Non-blocking notification catch
+      }
+    }
 
     return this.formatBookingResponse(updated);
   }

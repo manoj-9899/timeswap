@@ -1,7 +1,32 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/providers/auth-provider';
 
 export default function HomePage() {
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      if (user.profile?.is_completed === false) {
+        router.push('/onboarding');
+      } else {
+        router.push('/dashboard');
+      }
+    }
+  }, [user, isLoading, router]);
+
+  if (isLoading || user) {
+    return (
+      <div className="min-h-screen bg-[#fcfdfd] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0b6057]"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#fcfdfd] text-[#191c1b] font-sans flex flex-col justify-between">
       {/* Hero Section */}

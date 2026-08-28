@@ -340,7 +340,7 @@ describe('BookingsModule (E2E)', () => {
         payload: {
           service_offer_id: createdOfferId,
           scheduled_start_time: startTime,
-          duration_minutes: 30,
+          duration_minutes: 60,
         },
       });
 

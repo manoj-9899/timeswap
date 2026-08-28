@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
+import LocationSelector from '@/components/LocationSelector';
 
 interface ProfileData {
   id: string;
@@ -50,10 +51,13 @@ export default function MyProfilePage() {
   const [generalDistrict, setGeneralDistrict] = useState('');
   const [deliveryPreference, setDeliveryPreference] = useState<'ONLINE' | 'IN_PERSON' | 'BOTH'>('BOTH');
 
-  // Add skill modal
+  // Add skill modal multi-select state
   const [showAddSkillModal, setShowAddSkillModal] = useState(false);
-  const [selectedSkillId, setSelectedSkillId] = useState('');
+  const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
   const [selectedRole, setSelectedRole] = useState<'OFFERED' | 'LEARNING'>('OFFERED');
+  const [skillSearchQuery, setSkillSearchQuery] = useState('');
+  const [activeCategoryTab, setActiveCategoryTab] = useState<string>('ALL');
+  const [attachingSkills, setAttachingSkills] = useState(false);
 
   const fetchProfile = async () => {
     const res = await apiClient<ProfileData>('/users/me/profile');
@@ -66,7 +70,7 @@ export default function MyProfilePage() {
       setGeneralDistrict(res.data.generalDistrict || '');
       setDeliveryPreference((res.data.deliveryPreference as any) || 'BOTH');
     } else {
-      setError(res.error?.message || 'Failed to load profile');
+      setError(res.error?.message || 'Failed to fetch profile details');
     }
     setLoading(false);
   };
@@ -88,16 +92,20 @@ export default function MyProfilePage() {
     setError(null);
     setSuccessMsg(null);
 
+    const payload: any = {
+      display_name: displayName,
+      bio,
+      city,
+      general_district: generalDistrict,
+      delivery_preference: deliveryPreference,
+    };
+    if (avatarUrl) {
+      payload.avatar_url = avatarUrl;
+    }
+
     const res = await apiClient('/users/me/profile', {
       method: 'PATCH',
-      body: JSON.stringify({
-        display_name: displayName,
-        bio,
-        avatar_url: avatarUrl,
-        city,
-        general_district: generalDistrict,
-        delivery_preference: deliveryPreference,
-      }),
+      body: JSON.stringify(payload),
     });
 
     setSaving(false);
@@ -118,19 +126,39 @@ export default function MyProfilePage() {
     }
   };
 
-  const handleAddSkill = async () => {
-    if (!selectedSkillId) return;
-    const res = await apiClient('/skills/me/skills', {
-      method: 'POST',
-      body: JSON.stringify({
-        skill_id: selectedSkillId,
-        role: selectedRole,
-      }),
-    });
-    if (res.success) {
+  const toggleSkillSelection = (skillId: string) => {
+    if (selectedSkillIds.includes(skillId)) {
+      setSelectedSkillIds(selectedSkillIds.filter((id) => id !== skillId));
+    } else {
+      setSelectedSkillIds([...selectedSkillIds, skillId]);
+    }
+  };
+
+  const handleAddMultipleSkills = async () => {
+    if (selectedSkillIds.length === 0) return;
+    setAttachingSkills(true);
+
+    try {
+      await Promise.all(
+        selectedSkillIds.map((skillId) =>
+          apiClient('/skills/me/skills', {
+            method: 'POST',
+            body: JSON.stringify({
+              skill_id: skillId,
+              role: selectedRole,
+            }),
+          })
+        )
+      );
+
       setShowAddSkillModal(false);
-      setSelectedSkillId('');
+      setSelectedSkillIds([]);
+      setSkillSearchQuery('');
       fetchProfile();
+    } catch (err) {
+      console.error('Failed attaching skills:', err);
+    } finally {
+      setAttachingSkills(false);
     }
   };
 
@@ -181,27 +209,27 @@ export default function MyProfilePage() {
   return (
     <div className="min-h-screen bg-[#fcfdfd] text-[#191c1b] p-4 sm:p-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Profile Completion Progress Card */}
-        <div className="bg-white border border-[#e2e8f7] rounded-3xl p-5 shadow-sm space-y-2">
-          <div className="flex justify-between items-center text-xs font-extrabold text-[#191c1b]">
-            <span className="flex items-center gap-1.5 text-[#0b6057]">
-              <span className="material-symbols-outlined text-base">verified</span>
-              Profile Completeness Score
-            </span>
-            <span>{completionScore}%</span>
+        {/* Profile Completion Progress Card (Only shown when under 100%) */}
+        {completionScore < 100 && (
+          <div className="bg-white border border-[#e2e8f7] rounded-3xl p-5 shadow-sm space-y-2 animate-fadeIn">
+            <div className="flex justify-between items-center text-xs font-extrabold text-[#191c1b]">
+              <span className="flex items-center gap-1.5 text-[#0b6057]">
+                <span className="material-symbols-outlined text-base">verified</span>
+                Profile Completeness Score
+              </span>
+              <span>{completionScore}%</span>
+            </div>
+            <div className="w-full bg-[#f2f4f2] h-2.5 rounded-full overflow-hidden border border-[#e2e8f7]">
+              <div
+                className="bg-[#0b6057] h-full transition-all duration-500 rounded-full"
+                style={{ width: `${completionScore}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-[#515f5d]">
+              Add your bio, location, offered skills, and learning goals to reach 100% profile completeness.
+            </p>
           </div>
-          <div className="w-full bg-[#f2f4f2] h-2.5 rounded-full overflow-hidden border border-[#e2e8f7]">
-            <div
-              className="bg-[#0b6057] h-full transition-all duration-500 rounded-full"
-              style={{ width: `${completionScore}%` }}
-            />
-          </div>
-          <p className="text-[10px] text-[#515f5d]">
-            {completionScore === 100
-              ? '🎉 Profile is 100% complete! You are fully set to host and request skill exchanges.'
-              : 'Add your bio, location, offered skills, and learning goals to reach 100% profile completeness.'}
-          </p>
-        </div>
+        )}
 
         {/* Top Header Card */}
         <div className="bg-white border border-[#e2e8f7] rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
@@ -210,7 +238,7 @@ export default function MyProfilePage() {
               {profile.displayName.charAt(0).toUpperCase()}
             </div>
             <div className="space-y-1">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-xl font-extrabold text-[#191c1b]">{profile.displayName}</h1>
                 <span
                   className={`px-2.5 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider ${
@@ -221,6 +249,12 @@ export default function MyProfilePage() {
                 >
                   {profile.status}
                 </span>
+                {completionScore === 100 && (
+                  <span className="px-2.5 py-0.5 text-[10px] font-extrabold rounded-full bg-[#9cf2e8]/40 text-[#00504a] border border-[#80d5cb] flex items-center gap-1">
+                    <span className="material-symbols-outlined text-xs">verified</span>
+                    <span>100% Complete</span>
+                  </span>
+                )}
               </div>
               <p className="text-[#515f5d] text-xs font-semibold">@{profile.handle}</p>
               <div className="flex items-center gap-3 text-xs text-[#3f4947]">
@@ -241,7 +275,7 @@ export default function MyProfilePage() {
                 {Math.round(profile.wallet.availableBalance)} {Math.round(profile.wallet.availableBalance) === 1 ? 'Credit' : 'Credits'}
               </span>
               <span className="text-[10px] text-[#515f5d] block">
-                1 Credit = 1 Hour • Escrowed: {Math.round(profile.wallet.escrowedBalance)} CR
+                1 Credit = 1 Hour • Escrowed: {Math.round(profile.wallet.escrowedBalance)} {Math.round(profile.wallet.escrowedBalance) === 1 ? 'Credit' : 'Credits'}
               </span>
             </div>
 
@@ -287,27 +321,14 @@ export default function MyProfilePage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-[#191c1b] mb-1">City</label>
-                  <input
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-[#191c1b] mb-1">General District</label>
-                  <input
-                    type="text"
-                    value={generalDistrict}
-                    onChange={(e) => setGeneralDistrict(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-sm focus:outline-none focus:border-[#0b6057]"
-                  />
-                </div>
-              </div>
+              <LocationSelector
+                selectedCity={city}
+                selectedDistrict={generalDistrict}
+                onChange={({ city: c, district: d }) => {
+                  setCity(c);
+                  setGeneralDistrict(d);
+                }}
+              />
 
               <div>
                 <label className="block text-xs font-bold text-[#191c1b] mb-1">Delivery Preference</label>
@@ -417,49 +438,210 @@ export default function MyProfilePage() {
         </div>
       </div>
 
-      {/* Add Skill Modal */}
+      {/* Multi-Skill Selector Modal */}
       {showAddSkillModal && (
-        <div className="fixed inset-0 bg-[#191c1b]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-[#e2e8f7] rounded-3xl p-6 max-w-md w-full space-y-4 shadow-xl">
-            <h3 className="text-sm font-extrabold text-[#191c1b] uppercase tracking-wider">
-              Add Skill ({selectedRole === 'OFFERED' ? 'Teaching' : 'Learning'})
-            </h3>
-
-            <div>
-              <label className="block text-xs font-bold text-[#191c1b] mb-1">Select Skill</label>
-              <select
-                value={selectedSkillId}
-                onChange={(e) => setSelectedSkillId(e.target.value)}
-                className="w-full p-2.5 bg-white border border-[#e2e8f7] rounded-xl text-[#191c1b] text-xs focus:outline-none focus:border-[#0b6057]"
+        <div className="fixed inset-0 bg-[#191c1b]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-white border border-[#e2e8f7] rounded-3xl p-6 max-w-2xl w-full max-h-[85vh] flex flex-col space-y-4 shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center border-b border-[#e2e8f7] pb-3">
+              <div>
+                <h3 className="text-sm font-extrabold text-[#191c1b] uppercase tracking-wider flex items-center gap-2">
+                  <span className="material-symbols-outlined text-lg text-[#0b6057]">
+                    {selectedRole === 'OFFERED' ? 'workspace_premium' : 'school'}
+                  </span>
+                  <span>
+                    Choose {selectedRole === 'OFFERED' ? 'Teaching' : 'Learning'} Skills
+                  </span>
+                </h3>
+                <p className="text-[11px] text-[#515f5d] mt-0.5 font-medium">
+                  Select multiple skills at once to quickly expand your profile!
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAddSkillModal(false);
+                  setSelectedSkillIds([]);
+                  setSkillSearchQuery('');
+                }}
+                className="text-[#515f5d] hover:text-[#191c1b] p-1 rounded-lg text-lg font-bold"
               >
-                <option value="">-- Choose a Skill --</option>
-                {categories.map((cat) => (
-                  <optgroup key={cat.id} label={cat.name}>
-                    {cat.skills.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
+                ✕
+              </button>
             </div>
 
-            <div className="flex justify-end space-x-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowAddSkillModal(false)}
-                className="px-4 py-2 bg-white border border-[#e2e8f7] text-[#3f4947] text-xs rounded-xl font-bold"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleAddSkill}
-                className="px-4 py-2 bg-[#0b6057] hover:bg-[#00473f] text-white text-xs font-bold rounded-xl shadow-sm"
-              >
-                Attach Skill
-              </button>
+            {/* Search Bar & Category Filter Tabs */}
+            <div className="space-y-2.5">
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-3 top-2.5 text-base text-[#515f5d]">
+                  search
+                </span>
+                <input
+                  type="text"
+                  value={skillSearchQuery}
+                  onChange={(e) => setSkillSearchQuery(e.target.value)}
+                  placeholder="Search skills (e.g. Python, Graphic Design, Speaking, Music...)"
+                  className="w-full pl-9 pr-4 py-2 bg-[#f2f4f2] border border-[#e2e8f7] rounded-xl text-xs text-[#191c1b] placeholder-[#515f5d]/70 focus:outline-none focus:border-[#0b6057]"
+                />
+                {skillSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSkillSearchQuery('')}
+                    className="absolute right-3 top-2 text-xs text-[#515f5d] font-bold"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {/* Category Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                <button
+                  type="button"
+                  onClick={() => setActiveCategoryTab('ALL')}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all ${
+                    activeCategoryTab === 'ALL'
+                      ? 'bg-[#0b6057] text-white'
+                      : 'bg-[#f2f4f2] text-[#515f5d] hover:bg-[#e2e8f7]'
+                  }`}
+                >
+                  All Categories
+                </button>
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setActiveCategoryTab(cat.id)}
+                    className={`px-3 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all ${
+                      activeCategoryTab === cat.id
+                        ? 'bg-[#0b6057] text-white'
+                        : 'bg-[#f2f4f2] text-[#515f5d] hover:bg-[#e2e8f7]'
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Scrollable Multi-Select Skill Cards Grid */}
+            <div className="flex-1 overflow-y-auto pr-1 space-y-4 max-h-[45vh]">
+              {categories
+                .filter((cat) => activeCategoryTab === 'ALL' || activeCategoryTab === cat.id)
+                .map((cat) => {
+                  const matchingSkills = cat.skills.filter((s) =>
+                    s.name.toLowerCase().includes(skillSearchQuery.toLowerCase())
+                  );
+
+                  if (matchingSkills.length === 0) return null;
+
+                  const existingSkillIds =
+                    selectedRole === 'OFFERED'
+                      ? profile?.offeredSkills.map((s) => s.id) || []
+                      : profile?.learningSkills.map((s) => s.id) || [];
+
+                  return (
+                    <div key={cat.id} className="space-y-2">
+                      <div className="text-[11px] font-extrabold text-[#515f5d] uppercase tracking-wider">
+                        {cat.name}
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {matchingSkills.map((s) => {
+                          const isAlreadyAttached = existingSkillIds.includes(s.id);
+                          const isSelected = selectedSkillIds.includes(s.id);
+
+                          if (isAlreadyAttached) {
+                            return (
+                              <div
+                                key={s.id}
+                                className="flex items-center justify-between p-2.5 bg-[#f2f4f2]/70 border border-[#e2e8f7] rounded-xl text-xs text-[#515f5d]/70 font-semibold cursor-not-allowed"
+                              >
+                                <span>{s.name}</span>
+                                <span className="text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-bold">
+                                  ✓ Added
+                                </span>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <button
+                              key={s.id}
+                              type="button"
+                              onClick={() => toggleSkillSelection(s.id)}
+                              className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all text-left border ${
+                                isSelected
+                                  ? selectedRole === 'OFFERED'
+                                    ? 'bg-[#9cf2e8]/40 border-[#0b6057] text-[#00504a] shadow-sm'
+                                    : 'bg-[#e0e7ff] border-[#4f46e5] text-[#3730a3] shadow-sm'
+                                  : 'bg-white border-[#e2e8f7] text-[#191c1b] hover:border-[#0b6057]/50 hover:bg-[#f2f4f2]/50'
+                              }`}
+                            >
+                              <span>{s.name}</span>
+                              <span
+                                className={`w-5 h-5 rounded-md flex items-center justify-center text-xs font-extrabold transition-all ${
+                                  isSelected
+                                    ? selectedRole === 'OFFERED'
+                                      ? 'bg-[#0b6057] text-white'
+                                      : 'bg-[#4f46e5] text-white'
+                                    : 'border border-[#bec9c6] text-transparent'
+                                }`}
+                              >
+                                ✓
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+
+            {/* Action Bar Footer */}
+            <div className="flex justify-between items-center border-t border-[#e2e8f7] pt-3">
+              <div className="text-xs font-bold text-[#191c1b]">
+                {selectedSkillIds.length > 0 ? (
+                  <span className="text-[#0b6057] bg-[#9cf2e8]/40 px-2.5 py-1 rounded-full text-xs font-extrabold">
+                    {selectedSkillIds.length} Skill{selectedSkillIds.length > 1 ? 's' : ''} Selected
+                  </span>
+                ) : (
+                  <span className="text-[#515f5d]">Click skills above to select</span>
+                )}
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddSkillModal(false);
+                    setSelectedSkillIds([]);
+                    setSkillSearchQuery('');
+                  }}
+                  className="px-4 py-2 bg-white border border-[#e2e8f7] text-[#3f4947] text-xs rounded-xl font-bold hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={selectedSkillIds.length === 0 || attachingSkills}
+                  onClick={handleAddMultipleSkills}
+                  className={`px-5 py-2 text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-1.5 ${
+                    selectedSkillIds.length === 0 || attachingSkills
+                      ? 'bg-gray-300 cursor-not-allowed'
+                      : 'bg-[#0b6057] hover:bg-[#00473f]'
+                  }`}
+                >
+                  {attachingSkills ? (
+                    <>
+                      <span className="material-symbols-outlined text-xs animate-spin">sync</span>
+                      <span>Attaching {selectedSkillIds.length}...</span>
+                    </>
+                  ) : (
+                    <span>Attach {selectedSkillIds.length > 0 ? `${selectedSkillIds.length} ` : ''}Skills</span>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

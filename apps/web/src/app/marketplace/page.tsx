@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
+import { MAHARASHTRA_DISTRICTS } from '@/lib/locations/maharashtra-locations';
 
 interface Category {
   id: string;
@@ -89,7 +90,6 @@ export default function MarketplacePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
-  const [selectedDuration, setSelectedDuration] = useState('');
   const [locationQuery, setLocationQuery] = useState('');
   const [page, setPage] = useState(1);
 
@@ -123,7 +123,6 @@ export default function MarketplacePage() {
         if (searchQuery) params.append('q', searchQuery);
         if (selectedCategory) params.append('category_id', selectedCategory);
         if (selectedFormat) params.append('delivery_format', selectedFormat);
-        if (selectedDuration) params.append('duration', selectedDuration);
         if (locationQuery) params.append('city', locationQuery);
         params.append('page', String(page));
         params.append('limit', '10');
@@ -137,7 +136,6 @@ export default function MarketplacePage() {
         if (searchQuery) params.append('q', searchQuery);
         if (selectedCategory) params.append('category_id', selectedCategory);
         if (selectedFormat) params.append('preferred_format', selectedFormat);
-        if (selectedDuration) params.append('target_duration', selectedDuration);
         if (locationQuery) params.append('city', locationQuery);
         params.append('page', String(page));
         params.append('limit', '10');
@@ -164,7 +162,7 @@ export default function MarketplacePage() {
     } finally {
       setLoading(false);
     }
-  }, [activeTab, searchQuery, selectedCategory, selectedFormat, selectedDuration, locationQuery, page]);
+  }, [activeTab, searchQuery, selectedCategory, selectedFormat, locationQuery, page]);
 
   useEffect(() => {
     fetchData();
@@ -174,7 +172,6 @@ export default function MarketplacePage() {
     setSearchQuery('');
     setSelectedCategory('');
     setSelectedFormat('');
-    setSelectedDuration('');
     setLocationQuery('');
     setPage(1);
   };
@@ -265,8 +262,8 @@ export default function MarketplacePage() {
             ))}
           </div>
 
-          {/* Format & Duration Filter Toggles */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-[#e2e8f7]">
+          {/* Format & Location Filter Toggles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#e2e8f7]">
             <div>
               <label className="block text-[11px] font-extrabold text-[#515f5d] uppercase tracking-wider mb-1">
                 Format
@@ -285,34 +282,24 @@ export default function MarketplacePage() {
 
             <div>
               <label className="block text-[11px] font-extrabold text-[#515f5d] uppercase tracking-wider mb-1">
-                Duration
+                District / Location (MH)
               </label>
               <select
-                value={selectedDuration}
-                onChange={(e) => { setSelectedDuration(e.target.value); setPage(1); }}
-                className="w-full bg-[#f2f4f2] border border-[#e2e8f7] rounded-xl px-3 py-2 text-xs font-semibold text-[#191c1b] focus:outline-none focus:border-[#0b6057]"
-                disabled={activeTab === 'members'}
-              >
-                <option value="">All Durations</option>
-                <option value="60">60 minutes (1 Credit)</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-extrabold text-[#515f5d] uppercase tracking-wider mb-1">
-                City / Location
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. San Francisco"
                 value={locationQuery}
                 onChange={(e) => { setLocationQuery(e.target.value); setPage(1); }}
                 className="w-full bg-[#f2f4f2] border border-[#e2e8f7] rounded-xl px-3 py-2 text-xs font-semibold text-[#191c1b] focus:outline-none focus:border-[#0b6057]"
-              />
+              >
+                <option value="">All Maharashtra Regions</option>
+                {MAHARASHTRA_DISTRICTS.map((item) => (
+                  <option key={item.district} value={item.city}>
+                    {item.district} ({item.city})
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          {(searchQuery || selectedCategory || selectedFormat || selectedDuration || locationQuery) && (
+          {(searchQuery || selectedCategory || selectedFormat || locationQuery) && (
             <div className="flex items-center justify-between pt-2 border-t border-[#e2e8f7]">
               <span className="text-xs text-[#515f5d]">Active discovery filters applied</span>
               <button
@@ -401,7 +388,7 @@ export default function MarketplacePage() {
                       </div>
                       <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#ffdcc3]/50 text-[#663500] border border-[#ffb77d] text-xs font-bold">
                         <span className="material-symbols-outlined text-xs text-[#904d00]">schedule</span>
-                        60 min • 1.0 CR
+                        60 min • 1 Credit
                       </div>
                     </div>
 
@@ -460,7 +447,7 @@ export default function MarketplacePage() {
                       </div>
                       <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#ffdcc3]/50 text-[#663500] border border-[#ffb77d] text-xs font-bold">
                         <span className="material-symbols-outlined text-xs text-[#904d00]">schedule</span>
-                        60 min • 1.0 CR
+                        60 min • 1 Credit
                       </div>
                     </div>
 

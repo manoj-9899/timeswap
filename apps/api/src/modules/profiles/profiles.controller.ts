@@ -4,6 +4,7 @@ import {
   Patch,
   Post,
   Param,
+  Query,
   Body,
   UseGuards,
   UsePipes,
@@ -26,6 +27,17 @@ import {
 @UseGuards(SessionAuthGuard)
 export class ProfilesController {
   constructor(private profilesService: ProfilesService) {}
+
+  @Public()
+  @Get('profiles/check-handle')
+  @HttpCode(HttpStatus.OK)
+  async checkHandle(@Query('handle') handle: string) {
+    const result = await this.profilesService.checkHandleAvailability(handle);
+    return {
+      success: true,
+      data: result,
+    };
+  }
 
   @Get('users/me/profile')
   @HttpCode(HttpStatus.OK)

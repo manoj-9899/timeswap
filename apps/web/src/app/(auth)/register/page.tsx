@@ -40,7 +40,7 @@ export default function RegisterPage() {
     <div className="bg-white border border-[#e2e8f7] rounded-3xl p-6 sm:p-10 shadow-sm space-y-6">
       <div className="space-y-1 text-center sm:text-left">
         <span className="text-[10px] text-[#904d00] uppercase font-bold tracking-wider bg-[#ffdcc3]/50 border border-[#ffb77d] px-2.5 py-1 rounded-full inline-block">
-          Starter Grant +1 CR
+          Starter Grant +1 Credit
         </span>
         <h1 className="text-2xl font-extrabold text-[#191c1b] tracking-tight">Create an Account</h1>
         <p className="text-xs text-[#515f5d]">Join TimeSwap to exchange skills with your local & global community.</p>

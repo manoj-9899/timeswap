@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
+import LocationSelector from '@/components/LocationSelector';
 
 interface Category {
   id: string;
@@ -277,27 +278,15 @@ export default function PublishListingPage() {
 
           {/* Location details for In-Person */}
           {(deliveryFormat === 'IN_PERSON' || deliveryFormat === 'BOTH') && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-[#191c1b]">City</label>
-                <input
-                  type="text"
-                  placeholder="e.g. San Francisco"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="w-full bg-white border border-[#e2e8f7] rounded-xl px-3.5 py-2.5 text-xs text-[#191c1b] focus:outline-none focus:border-[#0b6057]"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-[#191c1b]">General District</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Mission District"
-                  value={district}
-                  onChange={(e) => setDistrict(e.target.value)}
-                  className="w-full bg-white border border-[#e2e8f7] rounded-xl px-3.5 py-2.5 text-xs text-[#191c1b] focus:outline-none focus:border-[#0b6057]"
-                />
-              </div>
+            <div className="pt-2 space-y-2">
+              <LocationSelector
+                selectedCity={city || 'Pune'}
+                selectedDistrict={district || 'Kothrud'}
+                onChange={({ city: c, district: d }) => {
+                  setCity(c);
+                  setDistrict(d);
+                }}
+              />
             </div>
           )}
 

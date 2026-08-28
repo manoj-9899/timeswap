@@ -52,14 +52,29 @@ export default function DashboardPage() {
       setLoading(true);
       try {
         const [offersRes, requestsRes, bookingsRes] = await Promise.all([
-          apiClient<Offer[]>('/discovery/offers?limit=4'),
-          apiClient<HelpRequest[]>('/discovery/requests?limit=4'),
-          apiClient<Booking[]>('/bookings?limit=3'),
+          apiClient<any>('/discovery/offers?limit=4'),
+          apiClient<any>('/discovery/requests?limit=4'),
+          apiClient<any>('/bookings?limit=3'),
         ]);
 
-        if (offersRes.success && offersRes.data) setOffers(offersRes.data);
-        if (requestsRes.success && requestsRes.data) setRequests(requestsRes.data);
-        if (bookingsRes.success && bookingsRes.data) setBookings(bookingsRes.data);
+        if (offersRes.success && offersRes.data) {
+          const items = Array.isArray(offersRes.data)
+            ? offersRes.data
+            : offersRes.data.items || [];
+          setOffers(items);
+        }
+        if (requestsRes.success && requestsRes.data) {
+          const items = Array.isArray(requestsRes.data)
+            ? requestsRes.data
+            : requestsRes.data.items || [];
+          setRequests(items);
+        }
+        if (bookingsRes.success && bookingsRes.data) {
+          const items = Array.isArray(bookingsRes.data)
+            ? bookingsRes.data
+            : bookingsRes.data.items || [];
+          setBookings(items);
+        }
       } catch (err) {
         // Handle error gracefully
       }
@@ -69,6 +84,8 @@ export default function DashboardPage() {
   }, []);
 
   const displayName = user?.profile?.display_name || user?.email?.split('@')[0] || 'Community Member';
+  const safeOffers = Array.isArray(offers) ? offers : [];
+  const safeBookings = Array.isArray(bookings) ? bookings : [];
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 bg-[#fcfdfd] min-h-screen text-[#191c1b]">
@@ -89,7 +106,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-4 bg-[#f2f4f2] p-4 rounded-2xl border border-[#e2e8f7]">
           <div className="space-y-0.5">
             <span className="text-[10px] text-[#515f5d] font-bold uppercase tracking-wider block">Available Balance</span>
-            <span className="text-2xl font-extrabold text-[#0b6057]">1 CR</span>
+            <span className="text-2xl font-extrabold text-[#0b6057]">1 Credit</span>
           </div>
           <Link
             href="/wallet"
@@ -153,9 +170,9 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {bookings.length > 0 ? (
+        {safeBookings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {bookings.map((booking) => (
+            {safeBookings.map((booking) => (
               <div
                 key={booking.id}
                 className="p-6 rounded-3xl bg-white border border-[#e2e8f7] flex flex-col justify-between space-y-4 shadow-sm"
@@ -165,7 +182,7 @@ export default function DashboardPage() {
                     {booking.status}
                   </span>
                   <span className="text-xs text-[#904d00] font-extrabold">
-                    {Math.round(booking.credit_amount)} CR ({booking.duration_minutes}m)
+                    {Math.round(booking.credit_amount)} {Math.round(booking.credit_amount) === 1 ? 'Credit' : 'Credits'} ({booking.duration_minutes}m)
                   </span>
                 </div>
                 <h3 className="text-sm font-extrabold text-[#191c1b]">
@@ -214,7 +231,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {offers.map((offer) => (
+            {safeOffers.map((offer) => (
               <Link
                 key={offer.id}
                 href={`/marketplace/offers/${offer.id}`}
@@ -223,10 +240,13 @@ export default function DashboardPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-[#00504a] bg-[#9cf2e8]/40 px-2.5 py-0.5 rounded-full border border-[#80d5cb]">
-                      {offer.delivery_format}
+                      {offer.delivery_format || 'ONLINE'}
                     </span>
                     <span className="text-[10px] text-[#515f5d] font-mono">
-                      {offer.supported_durations.join(' / ')} min
+                      {Array.isArray(offer.supported_durations)
+                        ? offer.supported_durations.join(' / ')
+                        : '60'}{' '}
+                      min
                     </span>
                   </div>
                   <h3 className="text-xs font-extrabold text-[#191c1b] line-clamp-2 group-hover:text-[#0b6057] transition">

@@ -1,0 +1,83 @@
+[
+  { "lgdCode": 4981, "districtLgdCode": 498, "nameEn": "Karveer", "nameMr": "करवीर" },
+  { "lgdCode": 4982, "districtLgdCode": 498, "nameEn": "Kagal", "nameMr": "कागल" },
+  { "lgdCode": 4983, "districtLgdCode": 498, "nameEn": "Hatkanangle", "nameMr": "हातकणंगले" },
+  { "lgdCode": 4984, "districtLgdCode": 498, "nameEn": "Shirol", "nameMr": "शिरोळ" },
+  { "lgdCode": 4985, "districtLgdCode": 498, "nameEn": "Radhanagari", "nameMr": "राधानगरी" },
+  { "lgdCode": 4986, "districtLgdCode": 498, "nameEn": "Shahuwadi", "nameMr": "शाहूवाडी" },
+  { "lgdCode": 4987, "districtLgdCode": 498, "nameEn": "Bhudargad", "nameMr": "भुदरगड" },
+  { "lgdCode": 4988, "districtLgdCode": 498, "nameEn": "Ajara", "nameMr": "आजरा" },
+  { "lgdCode": 4989, "districtLgdCode": 498, "nameEn": "Chandgad", "nameMr": "चंदगड" },
+  { "lgdCode": 4990, "districtLgdCode": 498, "nameEn": "Gaganbawada", "nameMr": "गगनबावडा" },
+
+  { "lgdCode": 5211, "districtLgdCode": 521, "nameEn": "Haveli", "nameMr": "हवेली" },
+  { "lgdCode": 5212, "districtLgdCode": 521, "nameEn": "Pune City", "nameMr": "पुणे शहर" },
+  { "lgdCode": 5213, "districtLgdCode": 521, "nameEn": "Mulshi", "nameMr": "मुळशी" },
+  { "lgdCode": 5214, "districtLgdCode": 521, "nameEn": "Maval", "nameMr": "मावळ" },
+  { "lgdCode": 5215, "districtLgdCode": 521, "nameEn": "Khed", "nameMr": "खेड" },
+  { "lgdCode": 5216, "districtLgdCode": 521, "nameEn": "Shirur", "nameMr": "शिरूर" },
+  { "lgdCode": 5217, "districtLgdCode": 521, "nameEn": "Baramati", "nameMr": "बारामती" },
+  { "lgdCode": 5218, "districtLgdCode": 521, "nameEn": "Purandar", "nameMr": "पुरंदर" },
+  { "lgdCode": 5219, "districtLgdCode": 521, "nameEn": "Junnar", "nameMr": "जुन्नर" },
+
+  { "lgdCode": 5181, "districtLgdCode": 518, "nameEn": "Andheri", "nameMr": "अंधेरी" },
+  { "lgdCode": 5182, "districtLgdCode": 518, "nameEn": "Borivali", "nameMr": "बोरीवली" },
+  { "lgdCode": 5183, "districtLgdCode": 518, "nameEn": "Kurla", "nameMr": "कुर्ला" },
+
+  { "lgdCode": 5171, "districtLgdCode": 517, "nameEn": "Mumbai City", "nameMr": "मुंबई शहर" },
+
+  { "lgdCode": 5251, "districtLgdCode": 525, "nameEn": "Thane", "nameMr": "ठाणे" },
+  { "lgdCode": 5252, "districtLgdCode": 525, "nameEn": "Kalyan", "nameMr": "कल्याण" },
+  { "lgdCode": 5253, "districtLgdCode": 525, "nameEn": "Bhiwandi", "nameMr": "भिवंडी" },
+  { "lgdCode": 5254, "districtLgdCode": 525, "nameEn": "Ulhasnagar", "nameMr": "उल्हासनगर" },
+  { "lgdCode": 5255, "districtLgdCode": 525, "nameEn": "Ambernath", "nameMr": "अंबरनाथ" },
+
+  { "lgdCode": 5221, "districtLgdCode": 522, "nameEn": "Alibag", "nameMr": "अलिबाग" },
+  { "lgdCode": 5222, "districtLgdCode": 522, "nameEn": "Panvel", "nameMr": "पनवेल" },
+  { "lgdCode": 5223, "districtLgdCode": 522, "nameEn": "Karjat", "nameMr": "कर्जत" },
+  { "lgdCode": 5224, "districtLgdCode": 522, "nameEn": "Pen", "nameMr": "पेण" },
+  { "lgdCode": 5225, "districtLgdCode": 522, "nameEn": "Roha", "nameMr": "रोहा" },
+
+  { "lgdCode": 6661, "districtLgdCode": 666, "nameEn": "Vasai", "nameMr": "वसई" },
+  { "lgdCode": 6662, "districtLgdCode": 666, "nameEn": "Palghar", "nameMr": "पालघर" },
+  { "lgdCode": 6663, "districtLgdCode": 666, "nameEn": "Dahanu", "nameMr": "डहाणू" },
+
+  { "lgdCode": 5191, "districtLgdCode": 519, "nameEn": "Nashik", "nameMr": "नाशिक" },
+  { "lgdCode": 5192, "districtLgdCode": 519, "nameEn": "Malegaon", "nameMr": "मालेगाव" },
+  { "lgdCode": 5193, "districtLgdCode": 519, "nameEn": "Sinnar", "nameMr": "सिन्नर" },
+  { "lgdCode": 5194, "districtLgdCode": 519, "nameEn": "Igatpuri", "nameMr": "इगतपुरी" },
+
+  { "lgdCode": 4921, "districtLgdCode": 492, "nameEn": "Chhatrapati Sambhajinagar", "nameMr": "छत्रपती संभाजीनगर" },
+  { "lgdCode": 4922, "districtLgdCode": 492, "nameEn": "Paithan", "nameMr": "पैठण" },
+  { "lgdCode": 4923, "districtLgdCode": 492, "nameEn": "Gangapur", "nameMr": "गंगापूर" },
+
+  { "lgdCode": 5141, "districtLgdCode": 514, "nameEn": "Nagpur Urban", "nameMr": "नागपूर शहर" },
+  { "lgdCode": 5142, "districtLgdCode": 514, "nameEn": "Nagpur Rural", "nameMr": "नागपूर ग्रामीण" },
+  { "lgdCode": 5143, "districtLgdCode": 514, "nameEn": "Umred", "nameMr": "उमरेड" },
+  { "lgdCode": 5144, "districtLgdCode": 514, "nameEn": "Ramtek", "nameMr": "रामटेक" },
+
+  { "lgdCode": 5231, "districtLgdCode": 523, "nameEn": "Satara", "nameMr": "सातारा" },
+  { "lgdCode": 5232, "districtLgdCode": 523, "nameEn": "Karad", "nameMr": "कराड" },
+  { "lgdCode": 5233, "districtLgdCode": 523, "nameEn": "Wai", "nameMr": "वाई" },
+  { "lgdCode": 5234, "districtLgdCode": 523, "nameEn": "Mahabaleshwar", "nameMr": "महाबळेश्वर" },
+
+  { "lgdCode": 5241, "districtLgdCode": 524, "nameEn": "Miraj", "nameMr": "मिरज" },
+  { "lgdCode": 5242, "districtLgdCode": 524, "nameEn": "Sangli", "nameMr": "सांगली" },
+  { "lgdCode": 5243, "districtLgdCode": 524, "nameEn": "Walwa", "nameMr": "वाळवा" },
+
+  { "lgdCode": 5261, "districtLgdCode": 526, "nameEn": "Solapur North", "nameMr": "उत्तर सोलापूर" },
+  { "lgdCode": 5262, "districtLgdCode": 526, "nameEn": "Solapur South", "nameMr": "दक्षिण सोलापूर" },
+  { "lgdCode": 5263, "districtLgdCode": 526, "nameEn": "Pandharpur", "nameMr": "पंढरपूर" },
+
+  { "lgdCode": 4911, "districtLgdCode": 491, "nameEn": "Ahilyanagar", "nameMr": "अहिल्यानगर" },
+  { "lgdCode": 4912, "districtLgdCode": 491, "nameEn": "Rahata", "nameMr": "राहाता" },
+  { "lgdCode": 4913, "districtLgdCode": 491, "nameEn": "Sangamner", "nameMr": "संगमनेर" },
+
+  { "lgdCode": 5201, "districtLgdCode": 520, "nameEn": "Ratnagiri", "nameMr": "रत्नागिरी" },
+  { "lgdCode": 5202, "districtLgdCode": 520, "nameEn": "Chiplun", "nameMr": "चिपळूण" },
+
+  { "lgdCode": 5271, "districtLgdCode": 527, "nameEn": "Kudal", "nameMr": "कुडाळ" },
+  { "lgdCode": 5272, "districtLgdCode": 527, "nameEn": "Sawantwadi", "nameMr": "सावंतवाडी" },
+  { "lgdCode": 5273, "districtLgdCode": 527, "nameEn": "Kankavli", "nameMr": "कणकवली" },
+  { "lgdCode": 5274, "districtLgdCode": 527, "nameEn": "Malvan", "nameMr": "मालवण" }
+]

@@ -13,6 +13,8 @@ import { LedgerModule } from './modules/ledger/ledger.module.js';
 import { DisputesModule } from './modules/disputes/disputes.module.js';
 import { ReviewsModule } from './modules/reviews/reviews.module.js';
 import { MessagingModule } from './modules/messaging/messaging.module.js';
+import { LocationsModule } from './modules/locations/locations.module.js';
+import { NotificationsModule } from './modules/notifications/notifications.module.js';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter.js';
 import * as path from 'path';
@@ -40,6 +42,8 @@ import * as path from 'path';
     DisputesModule,
     ReviewsModule,
     MessagingModule,
+    LocationsModule,
+    NotificationsModule,
   ],
   providers: [
     {

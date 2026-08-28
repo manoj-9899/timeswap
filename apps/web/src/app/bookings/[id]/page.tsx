@@ -292,7 +292,9 @@ END:VCALENDAR`;
                 </div>
                 <div>
                   <span className="text-[11px] text-[#515f5d] block font-bold uppercase tracking-wider">Escrow Hold</span>
-                  <span className="text-xs font-extrabold text-[#191c1b]">{Math.round(booking.credit_amount)} CR</span>
+                  <span className="text-xs font-extrabold text-[#191c1b]">
+                    {Math.round(booking.credit_amount)} {Math.round(booking.credit_amount) === 1 ? 'Credit' : 'Credits'}
+                  </span>
                 </div>
               </div>
             </div>

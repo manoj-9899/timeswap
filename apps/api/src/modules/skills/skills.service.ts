@@ -6,6 +6,12 @@ import { SkillRole } from '@timeswap/types';
 export class SkillsService {
   async getCategories() {
     return prisma.skillCategory.findMany({
+      where: {
+        AND: [
+          { name: { not: { contains: 'Test' } } },
+          { name: { not: { contains: 'Msg' } } },
+        ],
+      },
       orderBy: { name: 'asc' },
       include: {
         skills: {

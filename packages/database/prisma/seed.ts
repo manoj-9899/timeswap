@@ -1,4 +1,5 @@
 import { PrismaClient, LedgerAccountType } from '@prisma/client';
+import { seedLocations } from './seed-locations';
 
 const prisma = new PrismaClient();
 
@@ -78,6 +79,7 @@ async function main() {
   }
 
   console.log('Seed completed successfully.');
+  await seedLocations(prisma);
 }
 
 main()

@@ -16,9 +16,10 @@ export async function apiClient<T = any>(
   endpoint: string,
   options: RequestInit = {},
 ): Promise<ApiResponse<T>> {
-  const url = endpoint.startsWith('http')
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const primaryUrl = endpoint.startsWith('http')
     ? endpoint
-    : `${API_BASE_URL}/api/v1${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    : `${API_BASE_URL}/api/v1${cleanEndpoint}`;
 
   const headers = new Headers(options.headers);
   if (!headers.has('Content-Type') && options.body && !(options.body instanceof FormData)) {
@@ -26,20 +27,36 @@ export async function apiClient<T = any>(
   }
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(primaryUrl, {
       ...options,
       headers,
-      credentials: 'include', // Crucial for sending & receiving HTTP-only session cookies
+      credentials: 'include',
     });
 
     const data = await response.json();
     return data;
-  } catch (error: any) {
+  } catch (primaryError: any) {
+    // If primary fetch fails (e.g. CORS/localhost port issue), try relative rewrite fallback URL in browser
+    if (typeof window !== 'undefined' && !endpoint.startsWith('http')) {
+      try {
+        const fallbackUrl = `/api/v1${cleanEndpoint}`;
+        const response = await fetch(fallbackUrl, {
+          ...options,
+          headers,
+          credentials: 'include',
+        });
+        const data = await response.json();
+        return data;
+      } catch (fallbackError: any) {
+        // Continue to error output below
+      }
+    }
+
     return {
       success: false,
       error: {
         code: 'NETWORK_ERROR',
-        message: error.message || 'Failed to communicate with server.',
+        message: primaryError?.message || 'Failed to communicate with server.',
       },
     };
   }

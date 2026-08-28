@@ -5,12 +5,82 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { prisma, LedgerAccountType, EntryType, SkillRole } from '@timeswap/database';
-import { UpdateProfileDto, CompleteOnboardingDto } from '@timeswap/contracts';
+import {
+  UpdateProfileDto,
+  CompleteOnboardingDto,
+  generateHandleSuggestion,
+  generateHandleAlternatives,
+} from '@timeswap/contracts';
+
+import { NotificationsService } from '../notifications/notifications.service';
 
 export const SYSTEM_RESERVE_ACCOUNT_ID = '00000000-0000-0000-0000-000000000000';
 
 @Injectable()
 export class ProfilesService {
+  constructor(private readonly notificationsService: NotificationsService) {}
+
+  async checkHandleAvailability(handle: string, userId?: string) {
+    const handleNormalized = (handle || '').trim().toLowerCase();
+
+    if (!handleNormalized || handleNormalized.length < 4) {
+      return {
+        available: false,
+        reason: 'TOO_SHORT',
+        message: 'Handle must be at least 4 characters long.',
+      };
+    }
+
+    if (!/^[a-z0-9_]+$/.test(handleNormalized)) {
+      return {
+        available: false,
+        reason: 'INVALID_CHARACTERS',
+        message: 'Handle must contain only lowercase letters, numbers, and underscores.',
+      };
+    }
+
+    const existing = await prisma.profile.findFirst({
+      where: {
+        handle: {
+          equals: handleNormalized,
+          mode: 'insensitive',
+        },
+        NOT: userId ? { userId } : undefined,
+      },
+    });
+
+    if (existing) {
+      const candidates = generateHandleAlternatives(handleNormalized);
+      const availableAlternatives: string[] = [];
+
+      for (const alt of candidates) {
+        const altTaken = await prisma.profile.findFirst({
+          where: {
+            handle: {
+              equals: alt,
+              mode: 'insensitive',
+            },
+          },
+        });
+        if (!altTaken) {
+          availableAlternatives.push(alt);
+        }
+      }
+
+      return {
+        available: false,
+        reason: 'HANDLE_TAKEN',
+        message: `The handle '@${handleNormalized}' is already taken.`,
+        alternatives: availableAlternatives,
+      };
+    }
+
+    return {
+      available: true,
+      handle: handleNormalized,
+    };
+  }
+
   async getAuthenticatedProfile(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -48,7 +118,11 @@ export class ProfilesService {
       .map((ps) => ps.skill);
 
     const isCompleted =
-      user.status === 'ACTIVE' && !user.profile.handle.startsWith('user_');
+      user.status === 'ACTIVE' &&
+      !user.profile.handle.startsWith('user_') &&
+      !user.profile.handle.startsWith('g_');
+
+    const suggestedHandle = generateHandleSuggestion(user.profile.displayName);
 
     return {
       id: user.profile.id,
@@ -57,6 +131,7 @@ export class ProfilesService {
       status: user.status,
       displayName: user.profile.displayName,
       handle: user.profile.handle,
+      suggestedHandle,
       avatarUrl: user.profile.avatarUrl,
       bio: user.profile.bio,
       city: user.profile.city,
@@ -152,6 +227,7 @@ export class ProfilesService {
           bio: dto.bio,
           city: dto.city,
           generalDistrict: dto.general_district,
+          deliveryPreference: dto.delivery_preference || 'BOTH',
         },
       });
 
@@ -273,6 +349,20 @@ export class ProfilesService {
         starterCreditAwarded = 1.0;
       }
     });
+
+    if (starterCreditAwarded > 0) {
+      try {
+        await this.notificationsService.createNotification({
+          userId,
+          notificationType: 'STARTER_CREDIT_GRANTED',
+          title: 'Welcome Credit Granted! ⚡',
+          bodyText: 'You have received 1.0 starter credit for completing your profile setup. Explore the marketplace to start swapping skills!',
+          actionUrl: '/wallet',
+        });
+      } catch (err) {
+        // Non-blocking notification safety catch
+      }
+    }
 
     return {
       profile_completed: true,
@@ -411,8 +501,8 @@ export class ProfilesService {
         id: hr.id,
         title: hr.title,
         description: hr.description,
-        duration_minutes: hr.durationMinutes,
-        format: hr.format,
+        duration_minutes: hr.targetDuration,
+        format: hr.preferredFormat,
         category_name: hr.category.name,
         created_at: hr.createdAt,
       })),
