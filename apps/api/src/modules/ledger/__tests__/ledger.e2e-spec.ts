@@ -152,9 +152,12 @@ describe('Ledger & Escrow Subsystem (Phase 6 E2E)', () => {
   });
 
   it('3. Booking Escrow Lock - reserves credits when booking a 60-min session', async () => {
-    const cat = await prisma.skillCategory.create({
-      data: { name: `Ledger Skill Cat ${Date.now()}`, slug: `cat-ledger-${Date.now()}` },
-    });
+    let cat = await prisma.skillCategory.findFirst();
+    if (!cat) {
+      cat = await prisma.skillCategory.create({
+        data: { name: 'Technology & Programming', slug: 'technology-programming' },
+      });
+    }
 
     const offer = await prisma.serviceOffer.create({
       data: {

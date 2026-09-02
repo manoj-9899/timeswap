@@ -24,11 +24,11 @@ describe('Discovery Engine (E2E)', () => {
 
     // Setup seed test category & user for discovery testing
     const category = await prisma.skillCategory.upsert({
-      where: { slug: 'discovery-test-category' },
+      where: { slug: 'technology-programming' },
       update: {},
       create: {
-        name: 'Discovery Test Category',
-        slug: 'discovery-test-category',
+        name: 'Technology & Programming',
+        slug: 'technology-programming',
       },
     });
     testCategoryId = category.id;

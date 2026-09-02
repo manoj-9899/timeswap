@@ -54,11 +54,11 @@ describe('Profiles & Skills E2E', () => {
 
     // Create seed category & skill for testing
     const cat = await prisma.skillCategory.upsert({
-      where: { slug: 'test-cat-slug' },
+      where: { slug: 'technology-programming' },
       update: {},
       create: {
-        name: 'Test Category',
-        slug: 'test-cat-slug',
+        name: 'Technology & Programming',
+        slug: 'technology-programming',
       },
     });
     categoryId = cat.id;

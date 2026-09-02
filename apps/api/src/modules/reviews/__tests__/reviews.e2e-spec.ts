@@ -114,9 +114,12 @@ describe('Double-Blind Reviews Subsystem (Phase 8 E2E)', () => {
       data: { transactionId: tx.id, accountId: reqAcc.id, entryType: 'CREDIT', amount: 5.0 },
     });
 
-    const cat = await prisma.skillCategory.create({
-      data: { name: `Review Skill ${Date.now()}`, slug: `cat-review-${Date.now()}` },
-    });
+    let cat = await prisma.skillCategory.findFirst();
+    if (!cat) {
+      cat = await prisma.skillCategory.create({
+        data: { name: 'Technology & Programming', slug: 'technology-programming' },
+      });
+    }
 
     const offer = await prisma.serviceOffer.create({
       data: {

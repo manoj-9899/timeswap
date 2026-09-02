@@ -46,8 +46,8 @@ describe('MarketplaceModule (E2E)', () => {
     if (!category) {
       category = await prisma.skillCategory.create({
         data: {
-          name: 'Tech Test',
-          slug: 'tech-test',
+          name: 'Technology & Programming',
+          slug: 'technology-programming',
         },
       });
     }

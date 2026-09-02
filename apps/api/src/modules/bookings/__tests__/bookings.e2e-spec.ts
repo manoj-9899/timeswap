@@ -41,10 +41,13 @@ describe('BookingsModule (E2E)', () => {
     // Clean tables
     await prisma.$executeRawUnsafe(`TRUNCATE TABLE "messages", "message_threads", "reviews", "dispute_cases", "escrow_holds", "sessions", "bookings", "journal_entries", "ledger_transactions", "ledger_accounts", "service_offers", "help_requests", "profile_skills", "profiles", "users" CASCADE;`);
 
-    // Create Category
-    let category = await prisma.skillCategory.create({
-      data: { name: `Booking Test Category ${Date.now()}`, slug: `booking-cat-${Date.now()}` },
-    });
+    // Create or Fetch Category
+    let category = await prisma.skillCategory.findFirst();
+    if (!category) {
+      category = await prisma.skillCategory.create({
+        data: { name: 'Technology & Programming', slug: 'technology-programming' },
+      });
+    }
     categoryId = category.id;
 
     // Create Provider User
