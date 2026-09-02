@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { createHash } from 'crypto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import fastifyCookie from '@fastify/cookie';
@@ -50,14 +51,15 @@ describe('Disputes & Cancellation Lifecycle (Phase 7 E2E)', () => {
     });
     userId = reqUser.id;
 
-    const sReq = await prisma.sessionToken.create({
+    const rawTokenReq = `session-dispute-req-${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: reqUser.id,
-        token: `session-dispute-req-${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawTokenReq).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    userCookie = `timeswap_session=${sReq.token}`;
+    userCookie = `timeswap_session=${rawTokenReq}`;
 
     const provUser = await prisma.user.create({
       data: {
@@ -76,14 +78,15 @@ describe('Disputes & Cancellation Lifecycle (Phase 7 E2E)', () => {
     });
     providerId = provUser.id;
 
-    const sProv = await prisma.sessionToken.create({
+    const rawTokenProv = `session-dispute-prov-${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: provUser.id,
-        token: `session-dispute-prov-${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawTokenProv).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    providerCookie = `timeswap_session=${sProv.token}`;
+    providerCookie = `timeswap_session=${rawTokenProv}`;
 
     // Grant credits to Requester
     const sysAcc = await prisma.ledgerAccount.create({
@@ -110,9 +113,12 @@ describe('Disputes & Cancellation Lifecycle (Phase 7 E2E)', () => {
       data: { transactionId: tx.id, accountId: reqAcc.id, entryType: 'CREDIT', amount: 5.0 },
     });
 
-    const cat = await prisma.skillCategory.create({
-      data: { name: `Dispute Skill ${Date.now()}`, slug: `cat-dispute-${Date.now()}` },
-    });
+    let cat = await prisma.skillCategory.findFirst({ where: { slug: 'technology-programming' } });
+    if (!cat) {
+      cat = await prisma.skillCategory.create({
+        data: { name: 'Technology & Programming', slug: 'technology-programming' },
+      });
+    }
 
     const offer = await prisma.serviceOffer.create({
       data: {
@@ -149,6 +155,7 @@ describe('Disputes & Cancellation Lifecycle (Phase 7 E2E)', () => {
   });
 
   afterAll(async () => {
+    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "messages", "message_threads", "reviews", "dispute_cases", "escrow_holds", "sessions", "bookings", "journal_entries", "ledger_transactions", "service_offers", "help_requests", "profile_skills", "profiles", "users" CASCADE;`);
     if (app) {
       await app.close();
     }

@@ -91,6 +91,8 @@ export class AuthService {
     return {
       message: 'Registration successful. Please check your email to verify your account.',
       user_id: user.id,
+      email: user.email,
+      status: user.status,
     };
   }
 
@@ -183,7 +185,7 @@ export class AuthService {
     }
 
     const session = await this.sessionService.createSession(user.id);
-    return { user, token: session.token };
+    return { user, token: session.rawToken };
   }
 
   async verifyEmail(dto: VerifyEmailDto) {
@@ -220,6 +222,10 @@ export class AuthService {
     return { message: 'Email address verified successfully. You may now log in.' };
   }
 
+  // OWASP-compliant dummy Argon2id hash for constant-time email enumeration prevention
+  private readonly DUMMY_HASH =
+    '$argon2id$v=19$m=65536,t=3,p=1$c29tZXNhbHQ$R39yVq0/9l92L4u/D165gX/Z/6s00';
+
   async login(dto: LoginDto) {
     const email = dto.email.trim().toLowerCase();
 
@@ -229,6 +235,8 @@ export class AuthService {
     });
 
     if (!user || !user.credential) {
+      // Execute dummy Argon2id verification to prevent timing attack enumeration
+      await this.passwordService.verifyPassword(this.DUMMY_HASH, dto.password);
       throw new UnauthorizedException({
         code: 'INVALID_CREDENTIALS',
         message: 'Invalid email or password.',
@@ -271,7 +279,7 @@ export class AuthService {
         status: user.status,
         profile: user.profile,
       },
-      token: session.token,
+      token: session.rawToken,
     };
   }
 

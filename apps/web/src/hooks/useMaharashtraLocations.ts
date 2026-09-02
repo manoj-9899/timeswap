@@ -131,10 +131,11 @@ export function useMaharashtraLocations() {
     return filtered.map((p, index) => ({
       id: `loc_${talukaIdOrName}_${index + 1}`,
       talukaId: talukaIdOrName,
+      name_en: p,
       nameEn: p,
       nameMr: p,
       type: 'TOWN',
-      pincode: null,
+      pincode: '',
     }));
   }, []);
 
@@ -147,12 +148,13 @@ export function useMaharashtraLocations() {
     setPinLookupStatus('loading');
     try {
       const res = await fetch(`${API_BASE}/api/v1/locations/resolve-pincode/${pincode}`);
-      if (res.ok) {
-        const json = await res.json();
-        if (json.success && json.data) {
-          setPinLookupStatus('success');
-          return json.data;
-        }
+      const json = await res.json();
+      if (res.ok && json.success && json.data) {
+        setPinLookupStatus('success');
+        return json.data;
+      } else if (json?.error?.message) {
+        setPinLookupStatus('error');
+        throw new Error(json.error.message);
       }
     } catch {
       // Fallback
@@ -169,22 +171,25 @@ export function useMaharashtraLocations() {
           id: `dist_${staticPin.district}`,
           lgdCode: 490,
           nameEn: staticPin.district,
+          name_en: staticPin.district,
           nameMr: staticPin.district,
           stateCode: 'MH',
         },
-        taluka: {
-          id: `tal_${staticPin.taluka}`,
-          lgdCode: 4900,
-          districtId: `dist_${staticPin.district}`,
-          nameEn: staticPin.taluka,
-          nameMr: staticPin.taluka,
-        },
+        talukas: [
+          {
+            id: `tal_${staticPin.taluka}`,
+            lgdCode: 4900,
+            districtId: `dist_${staticPin.district}`,
+            nameEn: staticPin.taluka,
+            name_en: staticPin.taluka,
+            nameMr: staticPin.taluka,
+          },
+        ],
         localities: places.map((p: string, idx: number) => ({
           id: `loc_${idx + 1}`,
           talukaId: `tal_${staticPin.taluka}`,
+          name_en: p,
           nameEn: p,
-          nameMr: p,
-          type: 'TOWN',
           pincode,
         })),
       };

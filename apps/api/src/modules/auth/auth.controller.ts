@@ -33,6 +33,8 @@ import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { SessionAuthGuard } from '../../common/guards/session-auth.guard';
 
+const COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+
 @Controller('auth')
 @UseGuards(SessionAuthGuard)
 export class AuthController {
@@ -68,6 +70,7 @@ export class AuthController {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
+        maxAge: COOKIE_MAX_AGE_MS,
       });
 
       return res.redirect(`${clientUrl}/discover`, 302);
@@ -112,12 +115,13 @@ export class AuthController {
   ) {
     const result = await this.authService.login(dto);
 
-    // Set signed, HTTP-Only session cookie
+    // Set signed, HTTP-Only session cookie with 7-day explicit maxAge
     res.setCookie('timeswap_session', result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
+      maxAge: COOKIE_MAX_AGE_MS,
     });
 
     return {
@@ -137,6 +141,14 @@ export class AuthController {
       await this.authService.logout(sessionToken);
     }
 
+    res.setCookie('timeswap_session', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 0,
+      expires: new Date(0),
+    });
     res.clearCookie('timeswap_session', { path: '/' });
 
     return {

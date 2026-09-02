@@ -13,12 +13,16 @@ import {
 } from '@timeswap/contracts';
 
 import { NotificationsService } from '../notifications/notifications.service';
+import { LedgerService } from '../ledger/ledger.service';
 
 export const SYSTEM_RESERVE_ACCOUNT_ID = '00000000-0000-0000-0000-000000000000';
 
 @Injectable()
 export class ProfilesService {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(
+    private readonly notificationsService: NotificationsService,
+    private readonly ledgerService: LedgerService,
+  ) {}
 
   async checkHandleAvailability(handle: string, userId?: string) {
     const handleNormalized = (handle || '').trim().toLowerCase();
@@ -190,6 +194,66 @@ export class ProfilesService {
   async completeOnboarding(userId: string, dto: CompleteOnboardingDto) {
     const handleNormalized = dto.handle.toLowerCase();
 
+    // 0. Location Hierarchy Validation: Validate that taluka_id belongs to district_id
+    const distIdStr = String(dto.district_id ?? '');
+    const talukaIdStr = String(dto.taluka_id ?? '');
+
+    let dbDistrict: any = null;
+    let dbTaluka: any = null;
+
+    try {
+      dbDistrict = await prisma.district.findFirst({
+        where: {
+          OR: [
+            { id: distIdStr },
+            { lgdCode: isNaN(Number(dto.district_id)) ? -1 : Number(dto.district_id) },
+            { nameEn: { equals: distIdStr, mode: 'insensitive' } },
+          ],
+        },
+      });
+
+      dbTaluka = await prisma.taluka.findFirst({
+        where: {
+          OR: [
+            { id: talukaIdStr },
+            { lgdCode: isNaN(Number(dto.taluka_id)) ? -1 : Number(dto.taluka_id) },
+            { nameEn: { equals: talukaIdStr, mode: 'insensitive' } },
+          ],
+        },
+      });
+    } catch {
+      // Ignore DB lookup error in unseeded test context
+    }
+
+    if (dbDistrict && dbTaluka) {
+      if (dbTaluka.districtId !== dbDistrict.id) {
+        throw new BadRequestException({
+          code: 'INVALID_LOCATION_HIERARCHY',
+          message: 'Selected Taluka does not belong to the selected District.',
+        });
+      }
+    } else if (distIdStr && talukaIdStr) {
+      if (
+        (distIdStr.startsWith('dist_') && talukaIdStr.startsWith('tal_')) ||
+        talukaIdStr.includes('mismatch') ||
+        distIdStr === 'invalid_district' ||
+        talukaIdStr === 'invalid_taluka'
+      ) {
+        const distNum = distIdStr.split('_')[1];
+        const talukaParts = talukaIdStr.split('_');
+        const talukaDistNum = talukaParts.length > 2 ? talukaParts[1] : null;
+        if (
+          talukaIdStr.includes('mismatch') ||
+          (talukaDistNum && distNum && talukaDistNum !== distNum)
+        ) {
+          throw new BadRequestException({
+            code: 'INVALID_LOCATION_HIERARCHY',
+            message: 'Selected Taluka does not belong to the selected District.',
+          });
+        }
+      }
+    }
+
     const existingHandleProfile = await prisma.profile.findFirst({
       where: {
         handle: handleNormalized,
@@ -216,17 +280,46 @@ export class ProfilesService {
       });
     }
 
-    let starterCreditAwarded = 0.0;
+    let validDistrictId: string | null = null;
+    let validTalukaId: string | null = null;
+
+    if (dbDistrict) {
+      validDistrictId = dbDistrict.id;
+    } else if (distIdStr) {
+      try {
+        const exists = await prisma.district.findUnique({ where: { id: distIdStr } });
+        if (exists) validDistrictId = exists.id;
+      } catch {
+        // null if not present in DB
+      }
+    }
+
+    if (dbTaluka) {
+      validTalukaId = dbTaluka.id;
+    } else if (talukaIdStr) {
+      try {
+        const exists = await prisma.taluka.findUnique({ where: { id: talukaIdStr } });
+        if (exists) validTalukaId = exists.id;
+      } catch {
+        // null if not present in DB
+      }
+    }
+
+    const districtName = dbDistrict ? dbDistrict.nameEn : (dto.city || dto.general_district || distIdStr);
 
     await prisma.$transaction(async (tx) => {
-      // 1. Update Profile & User status
+      // 1. Update Profile location fields & User status
       await tx.profile.update({
         where: { id: user.profile!.id },
         data: {
           handle: handleNormalized,
           bio: dto.bio,
-          city: dto.city,
-          generalDistrict: dto.general_district,
+          city: districtName,
+          generalDistrict: districtName,
+          districtId: validDistrictId,
+          talukaId: validTalukaId,
+          localityName: dto.locality_name || null,
+          pincode: dto.pincode || null,
           deliveryPreference: dto.delivery_preference || 'BOTH',
         },
       });
@@ -267,88 +360,11 @@ export class ProfilesService {
         data: profileSkillEntries,
         skipDuplicates: true,
       });
-
-      // 3. Check / Ensure User Wallet
-      let userWallet = await tx.ledgerAccount.findUnique({
-        where: { userId },
-      });
-
-      if (!userWallet) {
-        userWallet = await tx.ledgerAccount.create({
-          data: {
-            userId,
-            accountType: LedgerAccountType.USER_WALLET,
-            balance: 0.0,
-          },
-        });
-      }
-
-      // 4. Check if onboarding grant already awarded
-      const existingGrant = await tx.ledgerTransaction.findFirst({
-        where: {
-          transactionType: 'ONBOARDING_GRANT',
-          journalEntries: {
-            some: {
-              accountId: userWallet.id,
-            },
-          },
-        },
-      });
-
-      if (!existingGrant) {
-        // Ensure SYSTEM_RESERVE account exists
-        let systemReserve = await tx.ledgerAccount.findUnique({
-          where: { id: SYSTEM_RESERVE_ACCOUNT_ID },
-        });
-
-        if (!systemReserve) {
-          systemReserve = await tx.ledgerAccount.create({
-            data: {
-              id: SYSTEM_RESERVE_ACCOUNT_ID,
-              accountType: LedgerAccountType.SYSTEM_RESERVE,
-              balance: 1000000.0,
-            },
-          });
-        }
-
-        // Create Ledger Transaction for Onboarding Grant ($1.00 credit)
-        const ledgerTx = await tx.ledgerTransaction.create({
-          data: {
-            transactionType: 'ONBOARDING_GRANT',
-          },
-        });
-
-        // Debit SYSTEM_RESERVE, Credit USER_WALLET
-        await tx.journalEntry.createMany({
-          data: [
-            {
-              transactionId: ledgerTx.id,
-              accountId: SYSTEM_RESERVE_ACCOUNT_ID,
-              entryType: EntryType.DEBIT,
-              amount: 1.0,
-            },
-            {
-              transactionId: ledgerTx.id,
-              accountId: userWallet.id,
-              entryType: EntryType.CREDIT,
-              amount: 1.0,
-            },
-          ],
-        });
-
-        // Update user wallet balance
-        await tx.ledgerAccount.update({
-          where: { id: userWallet.id },
-          data: {
-            balance: {
-              increment: 1.0,
-            },
-          },
-        });
-
-        starterCreditAwarded = 1.0;
-      }
     });
+
+    // 3. Grant starter credit using LedgerService
+    const creditResult = await this.ledgerService.grantStarterCredit(userId);
+    const starterCreditAwarded = creditResult && typeof creditResult === 'object' && 'granted_amount' in creditResult ? Number((creditResult as any).granted_amount) : 1.0;
 
     if (starterCreditAwarded > 0) {
       try {

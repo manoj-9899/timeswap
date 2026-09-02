@@ -1,40 +1,54 @@
 import { Injectable } from '@nestjs/common';
 import { prisma } from '@timeswap/database';
-import { randomBytes } from 'crypto';
+import { randomBytes, createHash } from 'crypto';
 
 @Injectable()
 export class SessionService {
   private readonly SESSION_DURATION_DAYS = 7;
 
   /**
+   * Hashes a raw session token using SHA-256 for secure database lookup.
+   */
+  private hashToken(rawToken: string): string {
+    return createHash('sha256').update(rawToken).digest('hex');
+  }
+
+  /**
    * Creates a new session token for the user in PostgreSQL datastore.
+   * Stores the SHA-256 hash in the database and returns the raw token for HTTP cookie header.
    */
   async createSession(userId: string, ipAddress?: string, userAgent?: string) {
-    const token = randomBytes(32).toString('hex');
+    const rawToken = randomBytes(32).toString('hex');
+    const tokenHash = this.hashToken(rawToken);
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + this.SESSION_DURATION_DAYS);
 
     const session = await prisma.sessionToken.create({
       data: {
         userId,
-        token,
+        tokenHash,
         expiresAt,
         ipAddress,
         userAgent,
       },
     });
 
-    return session;
+    return {
+      ...session,
+      rawToken,
+    };
   }
 
   /**
-   * Validates a session token, returning the full user with profile if valid.
+   * Validates a raw session token, returning the full user with profile if valid.
    */
-  async validateSession(token: string) {
-    if (!token) return null;
+  async validateSession(rawToken: string) {
+    if (!rawToken) return null;
+
+    const tokenHash = this.hashToken(rawToken);
 
     const session = await prisma.sessionToken.findUnique({
-      where: { token },
+      where: { tokenHash },
       include: {
         user: {
           include: {
@@ -56,12 +70,13 @@ export class SessionService {
   }
 
   /**
-   * Deletes a single session token (e.g. on logout).
+   * Deletes a single session token by hashing incoming raw token (e.g. on logout).
    */
-  async revokeSession(token: string) {
-    if (!token) return;
+  async revokeSession(rawToken: string) {
+    if (!rawToken) return;
+    const tokenHash = this.hashToken(rawToken);
     await prisma.sessionToken.deleteMany({
-      where: { token },
+      where: { tokenHash },
     });
   }
 

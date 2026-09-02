@@ -46,6 +46,11 @@ export default function OnboardingPage() {
   const [bio, setBio] = useState('');
   const [city, setCity] = useState('');
   const [generalDistrict, setGeneralDistrict] = useState('');
+  const [districtId, setDistrictId] = useState<string>('');
+  const [talukaId, setTalukaId] = useState<string>('');
+  const [localityName, setLocalityName] = useState<string>('');
+  const [pincode, setPincode] = useState<string>('');
+
   const [deliveryPreference, setDeliveryPreference] = useState<'ONLINE' | 'IN_PERSON' | 'BOTH'>('BOTH');
   const [offeredSkillIds, setOfferedSkillIds] = useState<string[]>([]);
   const [learningSkillIds, setLearningSkillIds] = useState<string[]>([]);
@@ -165,8 +170,8 @@ export default function OnboardingPage() {
     }
 
     if (step === 2) {
-      if (!city.trim() || !generalDistrict.trim()) {
-        setError('Please enter your city and general district for local matching');
+      if (!city.trim() || !generalDistrict.trim() || !districtId || !talukaId) {
+        setError('Please select a valid Maharashtra District and Taluka to proceed.');
         return;
       }
     }
@@ -199,6 +204,10 @@ export default function OnboardingPage() {
         bio: bio.trim(),
         city: city.trim(),
         general_district: generalDistrict.trim(),
+        district_id: districtId,
+        taluka_id: talukaId,
+        locality_name: localityName || undefined,
+        pincode: pincode || undefined,
         delivery_preference: deliveryPreference,
         offered_skill_ids: offeredSkillIds,
         learning_skill_ids: learningSkillIds,
@@ -240,16 +249,16 @@ export default function OnboardingPage() {
 
           <div className="flex flex-col gap-3 pt-2">
             <Link
-              href="/discover"
+              href="/dashboard"
               className="w-full py-3.5 bg-[#0b6057] hover:bg-[#00473f] text-white font-bold rounded-xl text-center transition-all shadow-sm"
             >
-              Explore Marketplace Catalog
+              Go to Dashboard
             </Link>
             <Link
-              href="/users/me/profile"
-              className="w-full py-3.5 bg-white border border-[#e2e8f7] hover:bg-[#f2f4f2] text-[#3f4947] font-semibold rounded-xl text-center transition-all"
+              href="/discover"
+              className="w-full py-3.5 bg-[#f2f4f2] hover:bg-[#e2e8f7] text-[#0b6057] font-bold rounded-xl text-center transition-all"
             >
-              View Profile & Wallet
+              Explore Marketplace Catalog
             </Link>
           </div>
         </div>
@@ -389,9 +398,13 @@ export default function OnboardingPage() {
               <LocationSelector
                 selectedCity={city}
                 selectedDistrict={generalDistrict}
-                onChange={({ city, district }) => {
-                  setCity(city);
-                  setGeneralDistrict(district);
+                onChange={(data) => {
+                  setCity(data.city);
+                  setGeneralDistrict(data.district);
+                  setDistrictId(data.districtId || '');
+                  setTalukaId(data.talukaId || '');
+                  setLocalityName(data.localityName || '');
+                  setPincode(data.pincode || '');
                 }}
               />
 

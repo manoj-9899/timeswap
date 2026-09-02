@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { createHash } from 'crypto';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
 import fastifyCookie from '@fastify/cookie';
@@ -65,14 +66,15 @@ describe('BookingsModule (E2E)', () => {
     });
     providerId = provider.id;
 
-    const s1 = await prisma.sessionToken.create({
+    const rawToken1 = `session-prov-${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: providerId,
-        token: `session-prov-${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawToken1).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    providerCookie = `timeswap_session=${s1.token}`;
+    providerCookie = `timeswap_session=${rawToken1}`;
 
     // Create Requester User
     const pass2 = await passwordService.hashPassword('Password123!');
@@ -118,14 +120,15 @@ describe('BookingsModule (E2E)', () => {
       data: { transactionId: tx.id, accountId: reqAcc.id, entryType: 'CREDIT', amount: 5.0 },
     });
 
-    const s2 = await prisma.sessionToken.create({
+    const rawToken2 = `session-req-${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: requesterId,
-        token: `session-req-${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawToken2).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    requesterCookie = `timeswap_session=${s2.token}`;
+    requesterCookie = `timeswap_session=${rawToken2}`;
 
     // Create Stranger User
     const pass3 = await passwordService.hashPassword('Password123!');
@@ -145,14 +148,15 @@ describe('BookingsModule (E2E)', () => {
       },
     });
 
-    const s3 = await prisma.sessionToken.create({
+    const rawToken3 = `session-stranger-${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: stranger.id,
-        token: `session-stranger-${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawToken3).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    strangerCookie = `timeswap_session=${s3.token}`;
+    strangerCookie = `timeswap_session=${rawToken3}`;
 
     // Create Service Offer for Provider
     const offer = await prisma.serviceOffer.create({

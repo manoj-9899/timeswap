@@ -26,18 +26,18 @@ describe('SessionService', () => {
 
   it('should create and validate a session token', async () => {
     const session = await sessionService.createSession(testUserId, '127.0.0.1', 'Vitest');
-    expect(session.token).toBeDefined();
+    expect(session.rawToken).toBeDefined();
 
-    const validated = await sessionService.validateSession(session.token);
+    const validated = await sessionService.validateSession(session.rawToken);
     expect(validated).not.toBeNull();
     expect(validated?.userId).toBe(testUserId);
   });
 
   it('should revoke a session token', async () => {
     const session = await sessionService.createSession(testUserId);
-    await sessionService.revokeSession(session.token);
+    await sessionService.revokeSession(session.rawToken);
 
-    const validated = await sessionService.validateSession(session.token);
+    const validated = await sessionService.validateSession(session.rawToken);
     expect(validated).toBeNull();
   });
 
@@ -47,7 +47,7 @@ describe('SessionService', () => {
 
     await sessionService.revokeAllUserSessions(testUserId);
 
-    expect(await sessionService.validateSession(session1.token)).toBeNull();
-    expect(await sessionService.validateSession(session2.token)).toBeNull();
+    expect(await sessionService.validateSession(session1.rawToken)).toBeNull();
+    expect(await sessionService.validateSession(session2.rawToken)).toBeNull();
   });
 });

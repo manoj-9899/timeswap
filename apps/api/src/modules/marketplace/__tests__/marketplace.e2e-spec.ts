@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { createHash } from 'crypto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import fastifyCookie from '@fastify/cookie';
@@ -75,14 +76,15 @@ describe('MarketplaceModule (E2E)', () => {
     });
     userOneId = userOne.id;
 
-    const sessionOne = await prisma.sessionToken.create({
+    const rawTokenOne = 'session-provider-token';
+    await prisma.sessionToken.create({
       data: {
         userId: userOne.id,
-        token: 'session-provider-token',
+        tokenHash: createHash('sha256').update(rawTokenOne).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    userOneCookie = `timeswap_session=${sessionOne.token}`;
+    userOneCookie = `timeswap_session=${rawTokenOne}`;
 
     // Create User Two (Requester)
     const passwordHash2 = await passwordService.hashPassword('Password123!');
@@ -107,14 +109,15 @@ describe('MarketplaceModule (E2E)', () => {
     });
     userTwoId = userTwo.id;
 
-    const sessionTwo = await prisma.sessionToken.create({
+    const rawTokenTwo = 'session-requester-token';
+    await prisma.sessionToken.create({
       data: {
         userId: userTwo.id,
-        token: 'session-requester-token',
+        tokenHash: createHash('sha256').update(rawTokenTwo).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    userTwoCookie = `timeswap_session=${sessionTwo.token}`;
+    userTwoCookie = `timeswap_session=${rawTokenTwo}`;
   });
 
   afterAll(async () => {

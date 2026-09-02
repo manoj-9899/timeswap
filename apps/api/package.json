@@ -23,6 +23,7 @@
     "@timeswap/contracts": "workspace:*",
     "@timeswap/database": "workspace:*",
     "@timeswap/types": "workspace:*",
+    "@twin.techies/india-pincode": "^0.1.5",
     "argon2": "^0.45.1",
     "bullmq": "^5.81.3",
     "fastify": "^5.12.1",

@@ -47,12 +47,7 @@ export class LocationsController {
 
   @Get('resolve-pincode/:pincode')
   async resolvePincode(@Param('pincode') pincode: string) {
-    const parsed = pincodeParamSchema.safeParse({ pincode });
-    if (!parsed.success) {
-      throw new BadRequestException('PIN code must be exactly 6 numeric digits');
-    }
-
-    const resolved = await this.locationsService.resolvePincode(parsed.data.pincode);
+    const resolved = await this.locationsService.resolvePincode(pincode);
     return {
       success: true,
       data: resolved,

@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { createHash } from 'crypto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import fastifyCookie from '@fastify/cookie';
@@ -50,14 +51,15 @@ describe('Ledger & Escrow Subsystem (Phase 6 E2E)', () => {
     });
     userId = userA.id;
 
-    const sA = await prisma.sessionToken.create({
+    const rawTokenA = `session-ledger-a-${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: userA.id,
-        token: `session-ledger-a-${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawTokenA).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    userCookie = `timeswap_session=${sA.token}`;
+    userCookie = `timeswap_session=${rawTokenA}`;
 
     // Grant User A initial starter credit
     const sysAcc = await prisma.ledgerAccount.create({
@@ -105,14 +107,15 @@ describe('Ledger & Escrow Subsystem (Phase 6 E2E)', () => {
     });
     providerId = userB.id;
 
-    const sB = await prisma.sessionToken.create({
+    const rawTokenB = `session-ledger-b-${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: userB.id,
-        token: `session-ledger-b-${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawTokenB).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    providerCookie = `timeswap_session=${sB.token}`;
+    providerCookie = `timeswap_session=${rawTokenB}`;
   });
 
   afterAll(async () => {

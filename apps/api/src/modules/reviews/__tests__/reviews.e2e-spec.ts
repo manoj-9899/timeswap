@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { createHash } from 'crypto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import fastifyCookie from '@fastify/cookie';
@@ -47,14 +48,15 @@ describe('Double-Blind Reviews Subsystem (Phase 8 E2E)', () => {
       },
     });
 
-    const sReq = await prisma.sessionToken.create({
+    const rawTokenReq = `session-rev-req-${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: reqUser.id,
-        token: `session-rev-req-${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawTokenReq).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    userCookie = `timeswap_session=${sReq.token}`;
+    userCookie = `timeswap_session=${rawTokenReq}`;
 
     const provUser = await prisma.user.create({
       data: {
@@ -77,14 +79,15 @@ describe('Double-Blind Reviews Subsystem (Phase 8 E2E)', () => {
     });
     providerHandle = provProfile!.handle;
 
-    const sProv = await prisma.sessionToken.create({
+    const rawTokenProv = `session-rev-prov-${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: provUser.id,
-        token: `session-rev-prov-${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawTokenProv).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    providerCookie = `timeswap_session=${sProv.token}`;
+    providerCookie = `timeswap_session=${rawTokenProv}`;
 
     // Grant credits to Requester
     const sysAcc = await prisma.ledgerAccount.create({

@@ -20,16 +20,26 @@ export const completeOnboardingSchema = z.object({
     .max(30, 'Handle must be at most 30 characters')
     .regex(/^[a-z0-9_]+$/, 'Handle must contain only lowercase letters, numbers, and underscores'),
   bio: z.string().min(30, 'Bio must be at least 30 characters long to help others know you'),
-  city: z.string().min(2, 'City is required'),
-  general_district: z.string().min(2, 'General district is required'),
+  city: z.string().optional().nullable(),
+  general_district: z.string().optional().nullable(),
+  district_id: z.union([z.string(), z.number()]),
+  taluka_id: z.union([z.string(), z.number()]),
+  locality_name: z.string().optional().nullable(),
+  pincode: z
+    .string()
+    .regex(/^\d{6}$/, 'PIN code must be 6 numeric digits')
+    .optional()
+    .nullable(),
   delivery_preference: z.enum(['ONLINE', 'IN_PERSON', 'BOTH']).optional(),
   offered_skill_ids: z
-    .array(z.string().uuid('Invalid skill ID'))
+    .array(z.string())
     .min(1, 'Please select at least one skill you can offer'),
   learning_skill_ids: z
-    .array(z.string().uuid('Invalid skill ID'))
+    .array(z.string())
     .min(1, 'Please select at least one skill you want to learn'),
 });
+
+export const CompleteOnboardingRequestSchema = completeOnboardingSchema;
 
 export function generateHandleSuggestion(name: string): string {
   if (!name) return 'user_profile';

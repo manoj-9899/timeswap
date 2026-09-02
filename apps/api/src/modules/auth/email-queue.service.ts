@@ -14,6 +14,8 @@ export class EmailQueueService {
         connection: {
           host: url.hostname || 'localhost',
           port: url.port ? parseInt(url.port, 10) : 6379,
+          enableOfflineQueue: false,
+          maxRetriesPerRequest: 1,
         },
       });
     } catch (error) {
@@ -26,8 +28,11 @@ export class EmailQueueService {
     this.logger.log(`Dispatching verification email to ${email} (token: ${token})`);
 
     if (this.queue) {
-      await this.queue.add('VERIFICATION_EMAIL', { email, token, link }).catch((err) => {
-        this.logger.error(`Failed to add verification email to queue: ${err.message}`);
+      Promise.race([
+        this.queue.add('VERIFICATION_EMAIL', { email, token, link }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Redis timeout')), 100)),
+      ]).catch((err) => {
+        this.logger.warn(`Email queue add bypassed/failed: ${err.message}`);
       });
     }
   }
@@ -37,8 +42,11 @@ export class EmailQueueService {
     this.logger.log(`Dispatching password reset email to ${email} (token: ${token})`);
 
     if (this.queue) {
-      await this.queue.add('PASSWORD_RESET_EMAIL', { email, token, link }).catch((err) => {
-        this.logger.error(`Failed to add password reset email to queue: ${err.message}`);
+      Promise.race([
+        this.queue.add('PASSWORD_RESET_EMAIL', { email, token, link }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Redis timeout')), 100)),
+      ]).catch((err) => {
+        this.logger.warn(`Email queue add bypassed/failed: ${err.message}`);
       });
     }
   }

@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { createHash } from 'crypto';
 import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
 import fastifyCookie from '@fastify/cookie';
@@ -93,14 +94,15 @@ describe('Profiles & Skills E2E', () => {
     testUser1Id = user1.id;
 
     // Create session 1
-    const session1 = await prisma.sessionToken.create({
+    const rawToken1 = `session_token_1_${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: user1.id,
-        token: `session_token_1_${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawToken1).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    testUser1Cookie = `timeswap_session=${session1.token}`;
+    testUser1Cookie = `timeswap_session=${rawToken1}`;
 
     // Create user 2
     const user2 = await prisma.user.create({
@@ -120,14 +122,15 @@ describe('Profiles & Skills E2E', () => {
     });
     testUser2Id = user2.id;
 
-    const session2 = await prisma.sessionToken.create({
+    const rawToken2 = `session_token_2_${Date.now()}`;
+    await prisma.sessionToken.create({
       data: {
         userId: user2.id,
-        token: `session_token_2_${Date.now()}`,
+        tokenHash: createHash('sha256').update(rawToken2).digest('hex'),
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    testUser2Cookie = `timeswap_session=${session2.token}`;
+    testUser2Cookie = `timeswap_session=${rawToken2}`;
   });
 
   afterAll(async () => {
@@ -225,8 +228,12 @@ describe('Profiles & Skills E2E', () => {
       payload: {
         handle: uniqueHandle,
         bio: 'This is a long bio that meets the 30 character requirement for onboarding.',
-        city: 'Oakland',
-        general_district: 'Downtown',
+        city: 'Pune',
+        general_district: 'Pune',
+        district_id: 'dist_pune',
+        taluka_id: 'tal_pune_haveli',
+        locality_name: 'Kothrud',
+        pincode: '411038',
         delivery_preference: 'BOTH',
         offered_skill_ids: [skillId],
         learning_skill_ids: [skillId],
@@ -310,8 +317,10 @@ describe('Profiles & Skills E2E', () => {
       payload: {
         handle: takenHandle,
         bio: 'This is another long bio that meets the 30 character requirement.',
-        city: 'San Jose',
-        general_district: 'Central',
+        city: 'Pune',
+        general_district: 'Pune',
+        district_id: 'dist_pune',
+        taluka_id: 'tal_pune_haveli',
         offered_skill_ids: [skillId],
         learning_skill_ids: [skillId],
       },
@@ -341,8 +350,8 @@ describe('Profiles & Skills E2E', () => {
     expect(body.success).toBe(true);
     expect(body.data.handle).toBe(handle);
     expect(body.data.display_name).toBe('Profile User One');
-    expect(body.data.city).toBe('Oakland');
-    expect(body.data.general_district).toBe('Downtown');
+    expect(body.data.city).toBe('Pune');
+    expect(body.data.general_district).toBe('Pune');
 
     // Data Masking Assertions: Sensitve / confidential credentials MUST NOT be returned!
     expect(body.data.email).toBeUndefined();

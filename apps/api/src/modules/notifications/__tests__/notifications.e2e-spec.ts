@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { createHash } from 'crypto';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
 import fastifyCookie from '@fastify/cookie';
@@ -49,14 +50,16 @@ describe('NotificationsModule (E2E)', () => {
     });
     testUserId = user.id;
 
-    const session = await prisma.sessionToken.create({
+    const rawToken = `session-notif-${Date.now()}`;
+    const tokenHash = createHash('sha256').update(rawToken).digest('hex');
+    await prisma.sessionToken.create({
       data: {
         userId: testUserId,
-        token: `session-notif-${Date.now()}`,
+        tokenHash,
         expiresAt: new Date(Date.now() + 86400000),
       },
     });
-    testUserCookie = `timeswap_session=${session.token}`;
+    testUserCookie = `timeswap_session=${rawToken}`;
 
     // Create Other User for isolation check
     const other = await prisma.user.create({

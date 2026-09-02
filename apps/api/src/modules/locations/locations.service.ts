@@ -1,10 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { prisma } from '@timeswap/database';
 import {
   MAHARASHTRA_DISTRICTS,
   MAHARASHTRA_LOCATION_DATA,
-  lookupPinCode,
 } from '@timeswap/contracts';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { isValidPincode, findByPincode } = require('@twin.techies/india-pincode');
+
+const DISTRICT_ALIAS_MAP: Record<string, string> = {
+  aurangabad: 'Chhatrapati Sambhajinagar',
+  osmanabad: 'Dharashiv',
+  ahmednagar: 'Ahilyanagar',
+};
 
 @Injectable()
 export class LocationsService {
@@ -20,6 +31,8 @@ export class LocationsService {
           lgdCode: d.lgdCode,
           nameEn: d.nameEn,
           nameMr: d.nameMr,
+          name_en: d.nameEn,
+          name_mr: d.nameMr,
           stateCode: d.stateCode,
         }));
       }
@@ -34,6 +47,8 @@ export class LocationsService {
         lgdCode: 490 + index,
         nameEn: name,
         nameMr: name,
+        name_en: name,
+        name_mr: name,
         stateCode: 'MH',
       };
     });
@@ -53,6 +68,8 @@ export class LocationsService {
           districtId: t.districtId,
           nameEn: t.nameEn,
           nameMr: t.nameMr,
+          name_en: t.nameEn,
+          name_mr: t.nameMr,
         }));
       }
     } catch {
@@ -83,6 +100,8 @@ export class LocationsService {
       districtId,
       nameEn: t.name,
       nameMr: t.name,
+      name_en: t.name,
+      name_mr: t.name,
     }));
   }
 
@@ -105,6 +124,8 @@ export class LocationsService {
           talukaId: l.talukaId,
           nameEn: l.nameEn,
           nameMr: l.nameMr,
+          name_en: l.nameEn,
+          name_mr: l.nameMr,
           type: l.type,
           pincode: l.pincode,
         }));
@@ -145,85 +166,132 @@ export class LocationsService {
       talukaId,
       nameEn: p,
       nameMr: p,
+      name_en: p,
+      name_mr: p,
       type: 'TOWN',
       pincode: null,
     }));
   }
 
   async resolvePincode(pincode: string) {
+    // 1. Format Validation
+    if (!pincode || !isValidPincode(pincode)) {
+      throw new BadRequestException({
+        code: 'INVALID_PINCODE_FORMAT',
+        message: 'PIN code must be a valid 6-digit number.',
+      });
+    }
+
+    // 2. Offline Lookup
+    const pincodeData = findByPincode(pincode);
+    if (!pincodeData) {
+      throw new NotFoundException({
+        code: 'PINCODE_NOT_FOUND',
+        message: 'PIN code not recognized.',
+      });
+    }
+
+    // 3. State Guard
+    if (
+      !pincodeData.state ||
+      pincodeData.state.toLowerCase() !== 'maharashtra'
+    ) {
+      throw new BadRequestException({
+        code: 'PINCODE_OUTSIDE_MAHARASHTRA',
+        message: 'TimeSwap is currently available only in Maharashtra.',
+      });
+    }
+
+    // 4. Relational Database Matching with Alias Normalization
+    const rawDistrict = pincodeData.district || '';
+    const normalizedDistrict =
+      DISTRICT_ALIAS_MAP[rawDistrict.toLowerCase()] || rawDistrict;
+
+    let dbDistrict: any = null;
     try {
-      const dbMapping = await prisma.pincodeMapping.findFirst({
-        where: { pincode },
+      dbDistrict = await prisma.district.findFirst({
+        where: {
+          OR: [
+            { nameEn: { equals: normalizedDistrict, mode: 'insensitive' } },
+            { nameEn: { contains: normalizedDistrict, mode: 'insensitive' } },
+            { nameEn: { equals: rawDistrict, mode: 'insensitive' } },
+          ],
+        },
         include: {
-          district: true,
-          taluka: true,
+          talukas: {
+            orderBy: { nameEn: 'asc' },
+          },
         },
       });
-
-      if (dbMapping) {
-        const localities = await this.getLocalitiesByTaluka(
-          dbMapping.talukaId,
-        );
-        return {
-          pincode,
-          district: {
-            id: dbMapping.district.id,
-            lgdCode: dbMapping.district.lgdCode,
-            nameEn: dbMapping.district.nameEn,
-            nameMr: dbMapping.district.nameMr,
-            stateCode: dbMapping.district.stateCode,
-          },
-          taluka: {
-            id: dbMapping.taluka.id,
-            lgdCode: dbMapping.taluka.lgdCode,
-            districtId: dbMapping.taluka.districtId,
-            nameEn: dbMapping.taluka.nameEn,
-            nameMr: dbMapping.taluka.nameMr,
-          },
-          localities,
-        };
-      }
     } catch {
-      // Fall back
+      // Ignore DB errors during fallback/test mode
     }
 
-    // Static fallback lookup
-    const staticPin = lookupPinCode(pincode);
-    if (staticPin) {
-      const districtId = `dist_${staticPin.district}`;
-      const talukaId = `tal_${staticPin.taluka}`;
-      const placesList = (staticPin as any).places ||
-        [(staticPin as any).place].filter(Boolean);
+    let district: any;
+    let talukas: any[] = [];
 
-      return {
-        pincode,
-        district: {
-          id: districtId,
-          lgdCode: 490,
-          nameEn: staticPin.district,
-          nameMr: staticPin.district,
-          stateCode: 'MH',
-        },
-        taluka: {
-          id: talukaId,
-          lgdCode: 4900,
-          districtId,
-          nameEn: staticPin.taluka,
-          nameMr: staticPin.taluka,
-        },
-        localities: placesList.map((p: string, idx: number) => ({
-          id: `loc_${idx + 1}`,
-          talukaId,
-          nameEn: p,
-          nameMr: p,
-          type: 'TOWN',
-          pincode,
-        })),
+    if (dbDistrict) {
+      district = {
+        id: dbDistrict.id,
+        lgdCode: dbDistrict.lgdCode,
+        nameEn: dbDistrict.nameEn,
+        nameMr: dbDistrict.nameMr,
+        name_en: dbDistrict.nameEn,
+        name_mr: dbDistrict.nameMr,
+        stateCode: dbDistrict.stateCode,
       };
+
+      talukas = dbDistrict.talukas.map((t: any) => ({
+        id: t.id,
+        lgdCode: t.lgdCode,
+        districtId: t.districtId,
+        nameEn: t.nameEn,
+        nameMr: t.nameMr,
+        name_en: t.nameEn,
+        name_mr: t.nameMr,
+      }));
+    } else {
+      district = {
+        id: `dist_${normalizedDistrict.toLowerCase().replace(/\s+/g, '_')}`,
+        nameEn: normalizedDistrict,
+        nameMr: normalizedDistrict,
+        name_en: normalizedDistrict,
+        name_mr: normalizedDistrict,
+        stateCode: 'MH',
+      };
+
+      // Fallback talukas lookup from static dataset if available
+      const staticDistObj = (MAHARASHTRA_LOCATION_DATA as any[]).find(
+        (d: any) =>
+          d.district.toLowerCase() === normalizedDistrict.toLowerCase() ||
+          d.district.toLowerCase() === rawDistrict.toLowerCase(),
+      );
+
+      if (staticDistObj) {
+        talukas = staticDistObj.talukas.map((t: any, idx: number) => ({
+          id: `tal_${idx + 1}`,
+          districtId: district.id,
+          nameEn: t.name,
+          nameMr: t.name,
+          name_en: t.name,
+          name_mr: t.name,
+        }));
+      }
     }
 
-    throw new NotFoundException(
-      `PIN code ${pincode} not found in Maharashtra location master dataset`,
-    );
+    // 5. Extract unique post office localities
+    const localities = (pincodeData.offices || []).map((office: any) => ({
+      name_en: office.name,
+      nameEn: office.name,
+      city: office.city || rawDistrict,
+      pincode: office.pincode || pincode,
+    }));
+
+    return {
+      pincode,
+      district,
+      talukas,
+      localities,
+    };
   }
 }

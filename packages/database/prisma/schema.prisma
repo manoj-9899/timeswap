@@ -137,7 +137,7 @@ model UserCredential {
 model SessionToken {
   id        String   @id @default(uuid())
   userId    String   @map("user_id")
-  token     String   @unique
+  tokenHash String   @unique @map("token_hash")
   expiresAt DateTime @map("expires_at")
   ipAddress String?  @map("ip_address")
   userAgent String?  @map("user_agent")
@@ -145,6 +145,7 @@ model SessionToken {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId, expiresAt])
   @@map("session_tokens")
 }
 
@@ -181,6 +182,10 @@ model Profile {
   bio                     String?
   city                    String
   generalDistrict         String         @map("general_district")
+  districtId              String?        @map("district_id")
+  talukaId                String?        @map("taluka_id")
+  localityName            String?        @map("locality_name")
+  pincode                 String?        @db.VarChar(6)
   deliveryPreference      DeliveryFormat @default(BOTH) @map("delivery_preference")
   ratingAverage           Decimal        @default(0.00) @db.Decimal(3, 2) @map("rating_average")
   completedExchangesCount Int            @default(0) @map("completed_exchanges_count")
@@ -188,10 +193,13 @@ model Profile {
   createdAt               DateTime       @default(now()) @map("created_at")
   updatedAt               DateTime       @updatedAt @map("updated_at")
 
-  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  skills ProfileSkill[]
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  district District?      @relation(fields: [districtId], references: [id], onDelete: SetNull)
+  taluka   Taluka?        @relation(fields: [talukaId], references: [id], onDelete: SetNull)
+  skills   ProfileSkill[]
 
   @@index([city, generalDistrict])
+  @@index([districtId, talukaId])
   @@map("profiles")
 }
 
@@ -495,6 +503,7 @@ model District {
 
   talukas         Taluka[]
   pincodeMappings PincodeMapping[]
+  profiles        Profile[]
 
   @@map("location_districts")
 }
@@ -510,6 +519,7 @@ model Taluka {
   district        District         @relation(fields: [districtId], references: [id], onDelete: Restrict)
   localities      Locality[]
   pincodeMappings PincodeMapping[]
+  profiles        Profile[]
 
   @@index([districtId])
   @@map("location_talukas")

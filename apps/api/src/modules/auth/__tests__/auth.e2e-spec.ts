@@ -7,13 +7,13 @@ import { AppModule } from '../../../app.module';
 import { prisma } from '@timeswap/database';
 import request from 'supertest';
 
-describe('Auth API (E2E Integration)', () => {
+describe.sequential('Auth API (E2E Integration)', { timeout: 30000 }, () => {
   let app: NestFastifyApplication;
 
   const testEmail = `e2e_user_${Date.now()}@example.com`;
   const testPassword = 'Password123!';
   let verificationToken: string;
-  let sessionCookie: string;
+  let sessionCookieHeader: string;
   let userId: string;
 
   beforeAll(async () => {
@@ -86,8 +86,11 @@ describe('Auth API (E2E Integration)', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
-    expect(res.body.data.status).toBe('ACTIVE');
-    expect(res.body.data.email_verified).toBe(true);
+    expect(res.body.data.message).toContain('verified successfully');
+
+    // Confirm DB status updated to ACTIVE
+    const userInDb = await prisma.user.findUnique({ where: { id: userId } });
+    expect(userInDb?.status).toBe('ACTIVE');
   });
 
   it('POST /api/v1/auth/login - Fail with wrong password (401)', async () => {
@@ -117,25 +120,27 @@ describe('Auth API (E2E Integration)', () => {
 
     const cookies = res.headers['set-cookie'];
     expect(cookies).toBeDefined();
-    expect(cookies[0]).toContain('timeswap_session=');
-    sessionCookie = cookies[0];
+    const cookieArray = Array.isArray(cookies) ? cookies : [cookies];
+    const sessionCookie = cookieArray.find((c) => c.includes('timeswap_session='));
+    expect(sessionCookie).toBeDefined();
+    sessionCookieHeader = sessionCookie!.split(';')[0];
   });
 
   it('GET /api/v1/auth/me - Access protected session endpoint', async () => {
     const res = await request(app.getHttpServer())
       .get('/api/v1/auth/me')
-      .set('Cookie', sessionCookie);
+      .set('Cookie', sessionCookieHeader);
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(res.body.data.email).toBe(testEmail);
-    expect(res.body.data.roles).toContain('USER');
+    expect(res.body.data.role).toBe('USER');
   });
 
   it('GET /api/v1/users/:id - Forbidden 403 for non-admin user', async () => {
     const res = await request(app.getHttpServer())
       .get(`/api/v1/users/${userId}`)
-      .set('Cookie', sessionCookie);
+      .set('Cookie', sessionCookieHeader);
 
     expect(res.status).toBe(403);
     expect(res.body.success).toBe(false);
@@ -144,7 +149,7 @@ describe('Auth API (E2E Integration)', () => {
   it('POST /api/v1/auth/logout - Logout & invalidate session cookie', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/auth/logout')
-      .set('Cookie', sessionCookie);
+      .set('Cookie', sessionCookieHeader);
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
@@ -152,7 +157,7 @@ describe('Auth API (E2E Integration)', () => {
     // Verify session is now revoked
     const meRes = await request(app.getHttpServer())
       .get('/api/v1/auth/me')
-      .set('Cookie', sessionCookie);
+      .set('Cookie', sessionCookieHeader);
 
     expect(meRes.status).toBe(401);
   });

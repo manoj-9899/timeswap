@@ -9,10 +9,19 @@ import {
 } from '@/lib/locations/maharashtra-locations';
 import { useMaharashtraLocations } from '@/hooks/useMaharashtraLocations';
 
+export interface LocationData {
+  city: string;
+  district: string;
+  districtId?: string;
+  talukaId?: string;
+  localityName?: string;
+  pincode?: string;
+}
+
 interface LocationSelectorProps {
   selectedCity: string;
   selectedDistrict: string;
-  onChange: (data: { city: string; district: string }) => void;
+  onChange: (data: LocationData) => void;
   className?: string;
   compact?: boolean;
 }
@@ -84,7 +93,7 @@ export default function LocationSelector({
     }
   }, [selectedCity, selectedDistrict]);
 
-  const triggerChange = (d: string, t: string, p: string) => {
+  const triggerChange = (d: string, t: string, p: string, pin?: string, explicitMatch?: any) => {
     let formattedDistrict = '';
     if (t && p) {
       formattedDistrict = `${t}, ${p}`;
@@ -96,9 +105,23 @@ export default function LocationSelector({
       formattedDistrict = d;
     }
 
+    const distObj = explicitMatch?.district || apiDistricts.find(
+      (item) => item.nameEn?.toLowerCase() === d.toLowerCase(),
+    );
+    const talukaObj = explicitMatch?.taluka || explicitMatch?.talukas?.[0] || distObj?.talukas?.find(
+      (item: any) => item.nameEn?.toLowerCase() === t.toLowerCase(),
+    );
+
+    const districtId = distObj?.id || (d ? `dist_${d.toLowerCase().replace(/\s+/g, '_')}` : undefined);
+    const talukaId = talukaObj?.id || (t ? `tal_${t.toLowerCase().replace(/\s+/g, '_')}` : undefined);
+
     onChange({
       city: d,
       district: formattedDistrict,
+      districtId,
+      talukaId,
+      localityName: p || undefined,
+      pincode: pin || pinCode || undefined,
     });
   };
 
@@ -116,24 +139,25 @@ export default function LocationSelector({
         setIsSearchingPin(false);
 
         if (match) {
-          const resolvedDist = match.district.nameEn;
-          const resolvedTaluka = match.taluka.nameEn;
-          const resolvedPlace = match.localities[0]?.nameEn || '';
+          const m = match as any;
+          const resolvedDist = m.district?.nameEn || m.district?.name_en || '';
+          const resolvedTaluka = m.talukas?.[0]?.nameEn || m.talukas?.[0]?.name_en || m.taluka?.nameEn || m.taluka?.name_en || '';
+          const resolvedPlace = m.localities?.[0]?.name_en || m.localities?.[0]?.nameEn || '';
 
           setDistrict(resolvedDist);
-          setTaluka(resolvedTaluka);
-          setPlace(resolvedPlace);
+          if (resolvedTaluka) setTaluka(resolvedTaluka);
+          if (resolvedPlace) setPlace(resolvedPlace);
 
           setPinSuccessInfo(
-            `Auto-filled: ${resolvedPlace ? `${resolvedPlace}, ` : ''}Ta. ${resolvedTaluka}, Dist. ${resolvedDist}`,
+            `Auto-filled: ${resolvedPlace ? `${resolvedPlace}, ` : ''}${resolvedTaluka ? `Ta. ${resolvedTaluka}, ` : ''}Dist. ${resolvedDist}`,
           );
-          triggerChange(resolvedDist, resolvedTaluka, resolvedPlace);
+          triggerChange(resolvedDist, resolvedTaluka, resolvedPlace, val, m);
         } else {
           setPinError('PIN code details not found. Please select address manually below.');
         }
-      } catch (err) {
+      } catch (err: any) {
         setIsSearchingPin(false);
-        setPinError('Could not auto-fetch PIN details. Please select address manually below.');
+        setPinError(err?.message || 'Could not auto-fetch PIN details. Please select address manually below.');
       }
     }
   };

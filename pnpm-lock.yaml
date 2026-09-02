@@ -53,6 +53,9 @@ importers:
       '@timeswap/types':
         specifier: workspace:*
         version: link:../../packages/types
+      '@twin.techies/india-pincode':
+        specifier: ^0.1.5
+        version: 0.1.5
       argon2:
         specifier: ^0.45.1
         version: 0.45.1
@@ -1137,6 +1140,10 @@ packages:
     resolution: {integrity: sha512-m8tJkIrTrbQ9O1uHxV0GUq623Zg1678xGna8eMsy4KbygUX/wVFgdZDYV/AxyoyaW/U7nyKoBvaDVwm22p9xqA==}
     cpu: [arm64]
     os: [win32]
+
+  '@twin.techies/india-pincode@0.1.5':
+    resolution: {integrity: sha512-HYThzWEJa/HgYDTpa4N99htCcrPuzfcy5f7AeePUDmNUAxsONJcM4hb/Gyh3PqIpdms0A3l0KjKK+dUj52a/Tg==}
+    engines: {node: '>=18'}
 
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
@@ -3742,6 +3749,8 @@ snapshots:
 
   '@turbo/windows-arm64@2.10.11':
     optional: true
+
+  '@twin.techies/india-pincode@0.1.5': {}
 
   '@types/chai@5.2.3':
     dependencies:

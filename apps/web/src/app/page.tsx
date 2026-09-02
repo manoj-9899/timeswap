@@ -65,18 +65,18 @@ export default function HomePage() {
           </div>
 
           {/* Trust Indicators */}
-          <div className="mt-16 pt-8 border-t border-[#e2e8f7] flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-80 text-xs sm:text-sm font-semibold text-[#3f4947]">
+          <div className="mt-16 pt-8 border-t border-[#e2e8f7] flex flex-wrap justify-center items-center gap-8 md:gap-16 text-xs sm:text-sm font-semibold text-[#3f4947]">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-2xl text-[#0b6057]">school</span>
-              <span>10k+ Skills</span>
+              <span>Verified Skill Taxonomy</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-2xl text-[#0b6057]">groups</span>
-              <span>50k+ Members</span>
+              <span>100% Non-Monetary</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-2xl text-[#0b6057]">schedule</span>
-              <span>1M+ Hours Swapped</span>
+              <span>1 Hour = 1 Time Credit</span>
             </div>
           </div>
         </div>
