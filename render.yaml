@@ -1,0 +1,62 @@
+services:
+  # Backend API Gateway Service (NestJS Fastify on Render)
+  - type: web
+    name: timeswap-api
+    env: node
+    region: singapore
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @timeswap/api... build
+    startCommand: pnpm --filter @timeswap/api start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://timeswap.vercel.app
+      - key: NEXT_PUBLIC_API_URL
+        value: https://timeswap-api.onrender.com
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+
+  # Background Queue Worker (BullMQ Consumer on Render)
+  - type: worker
+    name: timeswap-worker
+    env: node
+    region: singapore
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @timeswap/worker... build
+    startCommand: pnpm --filter @timeswap/worker start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false

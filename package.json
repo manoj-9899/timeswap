@@ -12,6 +12,7 @@
     "docker:down": "docker compose -f infrastructure/docker-compose.yml down",
     "db:generate": "pnpm --filter @timeswap/database db:generate",
     "db:migrate": "pnpm --filter @timeswap/database db:migrate",
+    "db:deploy": "pnpm --filter @timeswap/database db:deploy",
     "db:seed": "pnpm --filter @timeswap/database db:seed"
   },
   "devDependencies": {
